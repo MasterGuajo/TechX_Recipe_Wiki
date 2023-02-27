@@ -10,16 +10,16 @@ class Backend:
     #changed to check id instead of name
     def get_wiki_page(self, id):
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent")
+        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
         for blob in blobs:
             page_data = json.loads(blob.download_as_string(client=None))
-            if id == int(page_data["page_id"]):
+            if id == int(page_data["id"]):
                 return page_data
 
     #changed to return full list of page data instead of names
     def get_all_pages(self):
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent")
+        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
         all_pages_data = []
         for blob in blobs:
             page_data = json.loads(blob.download_as_string(client=None))
