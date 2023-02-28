@@ -26,8 +26,17 @@ class Backend:
             all_pages_data.append(page_data)
         return all_pages_data
 
-    def upload(self):
-        pass
+    def upload(self,bucket_name,blob_name):
+        
+        storage_client = storage.Client()
+
+        bucket = storage_client.bucket(bucket_name)
+
+        blob = bucket.blob(blob_name)
+
+        blob.upload_from_filename(blob_name)
+
+        return
 
     def sign_up(self):
         pass
@@ -35,6 +44,5 @@ class Backend:
     def sign_in(self):
         pass
 
-    def get_image(self):
+    def get_image(self,bucket_name,blob_name):
         pass
-
