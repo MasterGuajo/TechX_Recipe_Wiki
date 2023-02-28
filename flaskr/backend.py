@@ -45,4 +45,8 @@ class Backend:
         pass
 
     def get_image(self,bucket_name,blob_name):
+        # imageObj = open(blob_name, 'rb')
+        # imageBytes = imageObj.read()
+
+        # return send_file(io.BytesIO(imageBytes))
         pass
