@@ -1,3 +1,6 @@
+from google.cloud import storage
+import json
+
 # TODO(Project 1): Implement Backend according to the requirements.
 class Backend:
 
@@ -10,8 +13,17 @@ class Backend:
     def get_all_page_names(self):
         pass
 
-    def upload(self):
-        pass
+    def upload(self,bucket_name,blob_name):
+        
+        storage_client = storage.Client()
+
+        bucket = storage_client.bucket(bucket_name)
+
+        blob = bucket.blob(blob_name)
+
+        blob.upload_from_filename(blob_name)
+
+        return
 
     def sign_up(self):
         pass
@@ -19,6 +31,5 @@ class Backend:
     def sign_in(self):
         pass
 
-    def get_image(self):
+    def get_image(self,bucket_name,blob_name):
         pass
-
