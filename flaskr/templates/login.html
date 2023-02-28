@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+{% extends "navbar.html" %}
+{% block content %}
 <html>
     <h1>Log In Page</h1>
     <form action='/check_login' method='post'>
@@ -9,6 +10,5 @@
     <input type="submit" value="Log In">
     </form>
     <p><a href="/signup"> Sign Up Here</a></p>
-
-
 </html>
+{% endblock %}

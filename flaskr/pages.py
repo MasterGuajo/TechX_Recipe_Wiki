@@ -26,8 +26,8 @@ def make_endpoints(app):
     # Flask uses the "app.route" decorator tos call methods when users
     # go to a specific route on the project's website.
     @app.route("/")
-    @app.route("/home")
     @app.route("/index")
+    @app.route("/home")
     def home():
         return render_template("main.html")
 
@@ -41,7 +41,12 @@ def make_endpoints(app):
 
     @app.route("/about")
     def about():
+
+        # author_images = Backend.get_image()
+
         return render_template("about.html", author_images=None)
+
+
     
     # Checks that the file being uploaded is allowed
     def allowed_file(filename):
