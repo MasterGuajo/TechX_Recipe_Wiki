@@ -9,6 +9,7 @@ cd project
 chmod a+x run-flask.sh
 ./run-flask.sh
 """
+
 def make_endpoints(app):
 
     # Flask uses the "app.route" decorator tos call methods when users
@@ -21,11 +22,11 @@ def make_endpoints(app):
 
     @app.route("/pages")
     def pages():
-        return render_template("pages.html", pages=Backend.get_all_pages(0))
+        return render_template("pages.html", pages=Backend.get_all_pages(None))
 
     @app.route("/pages/<int:page_id>")
     def show_page(page_id):
-        return render_template("page.html", page_data=Backend.get_wiki_page(0,page_id))
+        return render_template("page.html", page_data=Backend.get_wiki_page(None, page_id))
 
     @app.route("/about")
     def about():
