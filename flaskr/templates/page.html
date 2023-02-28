@@ -1,7 +1,8 @@
+{% extends "navbar.html" %}
+
+{% block content %}
 <div>
     <div class="Header">
-        <h1>Dessert Wiki</h1>
-        <h2>Navbar</h2>
     </div>
 
     <div>
@@ -21,7 +22,7 @@
     <div>
         <ul>
             {% for ingr in page_data["ingr"]: %}
-            <li>{{ingr}}</li>
+            <li>{{ingr}}</li> <br>
             {% endfor %}
         </ul>
         <ol>
@@ -33,8 +34,4 @@
 
 
 </div>
-
-{% block content %}
-<h1>{{page_data["page_name"]}}</h1>
-<p>{{page_data["page_desc"]}}</p>
 {% endblock %}
