@@ -1,0 +1,12 @@
+<!-- TEST PAGE -->
+{% extends "navbar.html" %}
+
+{% block content %}
+    <h1>What's cooking, good looking?</h1>
+    <form method='POST' enctype='multipart/form-data'>
+        <input type='file' name='file'>
+        <input type='submit' value='Upload'>
+    </form>
+    <h2>{{ message }}</h2>
+    
+{% endblock%}

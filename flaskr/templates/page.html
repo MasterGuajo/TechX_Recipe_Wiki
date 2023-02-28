@@ -1,0 +1,40 @@
+<div>
+    <div class="Header">
+        <h1>Dessert Wiki</h1>
+        <h2>Navbar</h2>
+    </div>
+
+    <div>
+        <h2>{{page_data["name"]}}</h2>
+        <h3>{{page_data["game"]}}</h3>
+        <h4>{{page_data["cate"]}}</h4>
+    </div>
+
+    <div>
+        <p>
+            {{page_data["desc"]}}
+            <br>
+            <img src={{page_data["img"]}} alt="">
+        </p>
+    </div>
+
+    <div>
+        <ul>
+            {% for ingr in page_data["ingr"]: %}
+            <li>{{ingr}}</li>
+            {% endfor %}
+        </ul>
+        <ol>
+            {% for steps in page_data["step"]: %}
+            <li>{{steps}}</li>
+            {% endfor %}
+        </ol>
+    </div>
+
+
+</div>
+
+{% block content %}
+<h1>{{page_data["page_name"]}}</h1>
+<p>{{page_data["page_desc"]}}</p>
+{% endblock %}
