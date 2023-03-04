@@ -13,6 +13,9 @@ ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf'}
 
 from flaskr.backend import Backend
 
+from flaskr.user import User
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
+
 """
 run cmds:
 
@@ -22,6 +25,13 @@ chmod a+x run-flask.sh
 """
 
 def make_endpoints(app):
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_message = u"Please log in first."
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User(user_id)
 
     # Flask uses the "app.route" decorator tos call methods when users
     # go to a specific route on the project's website.
@@ -29,24 +39,24 @@ def make_endpoints(app):
     @app.route("/index")
     @app.route("/home")
     def home():
+        if current_user.is_authenticated:
+            return render_template("main.html", name = current_user.username)
         return render_template("main.html")
 
     @app.route("/pages")
     def pages():
-        return render_template("pages.html", pages=Backend.get_all_pages(None))
+        return render_template("pages.html", pages=Backend.get_all_pages(None), name = current_user.username)
 
     @app.route("/pages/<int:page_id>")
     def show_page(page_id):
-        return render_template("page.html", page_data=Backend.get_wiki_page(None, page_id))
+        return render_template("page.html", page_data=Backend.get_wiki_page(None, page_id), name = current_user.username)
 
     @app.route("/about")
     def about():
 
         # author_images = Backend.get_image()
 
-        return render_template("about.html", author_images=None)
-
-
+        return render_template("about.html", author_images=None, name = current_user.username)
     
     # Checks that the file being uploaded is allowed
     def allowed_file(filename):
@@ -55,6 +65,7 @@ def make_endpoints(app):
 
     # Here the users upload their files
     @app.route("/upload", methods=['GET', 'POST'])
+    @login_required
     def upload():
 
         if request.method == 'POST':
@@ -79,9 +90,9 @@ def make_endpoints(app):
                 Backend.upload(None,'nrjcontent',file.filename)
                 message = "Succesfully uploaded"
                
-                return render_template("upload.html",message = message)
+                return render_template("upload.html",message = message, name = current_user.username)
 
-        return render_template("upload.html")
+        return render_template("upload.html", name = current_user.username)
 
     @app.route("/signup")
     def signup():
@@ -93,7 +104,9 @@ def make_endpoints(app):
         password = "prefix" + request.form["Password"] 
         hash = hashlib.blake2b(password.encode()).hexdigest()
         user = {user_name : str(hash)}
+        flask_user = User(user_name)
         if Backend.sign_up(None,user, user_name):
+            login_user(flask_user)
             return redirect('/')
         else:
             return "error"
@@ -109,10 +122,18 @@ def make_endpoints(app):
         password = "prefix" + request.form["Password"] 
         hash = hashlib.blake2b(password.encode()).hexdigest()
         user = {"User" : user_name, "Pass" : str(hash)}
+        flask_user = User(user_name)
         if Backend.sign_in(None,user, user_name):
-            return redirect('/')
+            login_user(flask_user)
+            return redirect('/home')
         else: 
             return "error"
+
+    @app.route("/logout")
+    @login_required
+    def logout():
+        logout_user()
+        return redirect('/home')
 
 
     # TODO(Project 1): Implement additional routes according to the project requirements.

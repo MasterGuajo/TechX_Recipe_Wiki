@@ -13,7 +13,9 @@
 
 <body>
     <!-- TODO(Project 1): Implement routes. -->
-    
+    {% if current_user.is_authenticated %}
+        Hi {{ name }}!
+    {% endif %}
     <div>       
         <!-- TODO(Checkpoint Requirement 3): Change the title and content of your wiki.-->
         This is main.html <br>
