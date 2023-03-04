@@ -1,7 +1,13 @@
 from google.cloud import storage
+from flask import Flask, flash, request, redirect, url_for, send_file
+
+# Imports for get_image
+import base64
+import io
+
 import json
 
-# TODO(Project 1): Implement Backend according to the requirements.
+#TODO(Project 1): Implement Backend according to the requirements.
 class Backend:
 
     def __init__(self):
@@ -62,11 +68,13 @@ class Backend:
         else:
             return False
 
+    def get_image(self,blob_name):
 
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("nrjcontent")
+        blob = bucket.blob(blob_name)
 
-    def get_image(self,bucket_name,blob_name):
-        # imageObj = open(blob_name, 'rb')
-        # imageBytes = imageObj.read()
-
-        # return send_file(io.BytesIO(imageBytes))
-        pass
+        imageObj = blob.open('rb')
+        imageBytes = imageObj.read()
+ 
+        return base64.b64encode(imageBytes)

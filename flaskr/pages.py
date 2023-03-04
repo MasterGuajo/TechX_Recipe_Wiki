@@ -5,13 +5,16 @@ import hashlib
 # Stuff imported for file upload
 # from google.cloud import storage
 import os
-from flask import Flask, flash, request, redirect, url_for
+from flask import Flask, flash, request, redirect, url_for, send_file
 from werkzeug.utils import secure_filename
+
+
+import base64
+import io
+
 
 # Extension that the user is allowed to upload
 ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf'}
-
-from flaskr.backend import Backend
 
 """
 run cmds:
@@ -39,14 +42,20 @@ def make_endpoints(app):
     def show_page(page_id):
         return render_template("page.html", page_data=Backend.get_wiki_page(None, page_id))
 
-    @app.route("/about")
+    @app.route("/about", methods=['GET'])
     def about():
+        
+        # image = Backend.get_image(None,'plswork.jpg')
 
-        # author_images = Backend.get_image()
+        # return render_template("about.html", show = image.decode('utf-8'))
 
-        return render_template("about.html", author_images=None)
+        author_images = ['plswork.jpg','cat.jpg','hamster.png']
 
+        for index,file_name in enumerate(author_images):
+            image = Backend.get_image(None,file_name)
+            author_images[index] = image.decode('utf-8')
 
+        return render_template("about.html", show = author_images)
     
     # Checks that the file being uploaded is allowed
     def allowed_file(filename):
@@ -113,7 +122,6 @@ def make_endpoints(app):
             return redirect('/')
         else: 
             return "error"
-
 
     # TODO(Project 1): Implement additional routes according to the project requirements.
         
