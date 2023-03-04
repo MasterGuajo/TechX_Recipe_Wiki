@@ -45,18 +45,27 @@ def make_endpoints(app):
 
     @app.route("/pages")
     def pages():
-        return render_template("pages.html", pages=Backend.get_all_pages(None), name = current_user.username)
+        if current_user.is_authenticated:
+            return render_template("pages.html", pages=Backend.get_all_pages(None), name = current_user.username)
+        else:
+            return render_template("pages.html", pages=Backend.get_all_pages(None))
+
 
     @app.route("/pages/<int:page_id>")
     def show_page(page_id):
-        return render_template("page.html", page_data=Backend.get_wiki_page(None, page_id), name = current_user.username)
+        if current_user.is_authenticated:
+            return render_template("page.html", page_data=Backend.get_wiki_page(None, page_id), name = current_user.username)
+        else:
+            return render_template("page.html", page_data=Backend.get_wiki_page(None, page_id))
 
     @app.route("/about")
     def about():
 
         # author_images = Backend.get_image()
-
-        return render_template("about.html", author_images=None, name = current_user.username)
+        if current_user.is_authenticated:
+            return render_template("about.html", author_images=None, name = current_user.username)
+        else:
+            return render_template("about.html", author_images=None)
     
     # Checks that the file being uploaded is allowed
     def allowed_file(filename):
