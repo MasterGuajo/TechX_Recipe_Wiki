@@ -9,22 +9,9 @@ from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 
 # Extension that the user is allowed to upload
-ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf'}
-
-from flaskr.backend import Backend
-
-"""
-run cmds:
-
-cd project
-chmod a+x run-flask.sh
-./run-flask.sh
-"""
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf'}
 
 def make_endpoints(app):
-
-    # Flask uses the "app.route" decorator tos call methods when users
-    # go to a specific route on the project's website.
     @app.route("/")
     @app.route("/index")
     @app.route("/home")
@@ -41,17 +28,12 @@ def make_endpoints(app):
 
     @app.route("/about")
     def about():
+        return render_template("about.html", author_images=Backend.get_image(None))
 
-        # author_images = Backend.get_image()
-
-        return render_template("about.html", author_images=None)
-
-
-    
     # Checks that the file being uploaded is allowed
     def allowed_file(filename):
         return '.' in filename and \
-            filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
     # Here the users upload their files
     @app.route("/upload", methods=['GET', 'POST'])
@@ -69,17 +51,17 @@ def make_endpoints(app):
             if file.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
-            
+
             # If valid, we pass it to the backend in order to upload to our bucket
             if file and allowed_file(file.filename):
-                    
+
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(filename))
 
-                Backend.upload(None,'nrjcontent',file.filename)
+                Backend.upload(None, 'nrjcontent', file.filename)
                 message = "Succesfully uploaded"
-               
-                return render_template("upload.html",message = message)
+
+                return render_template("upload.html", message=message)
 
         return render_template("upload.html")
 
@@ -90,14 +72,13 @@ def make_endpoints(app):
     @app.route("/check_signup", methods=['POST'])
     def check_signup():
         user_name = request.form["Username"]
-        password = "prefix" + request.form["Password"] 
+        password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        user = {user_name : str(hash)}
-        if Backend.sign_up(None,user, user_name):
+        user = {user_name: str(hash)}
+        if Backend.sign_up(None, user, user_name):
             return redirect('/')
         else:
             return "error"
-        
 
     @app.route("/login")
     def login():
@@ -106,14 +87,12 @@ def make_endpoints(app):
     @app.route("/check_login", methods=['POST'])
     def check_login():
         user_name = request.form["Username"]
-        password = "prefix" + request.form["Password"] 
+        password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        user = {"User" : user_name, "Pass" : str(hash)}
-        if Backend.sign_in(None,user, user_name):
+        user = {"User": user_name, "Pass": str(hash)}
+        if Backend.sign_in(None, user, user_name):
             return redirect('/')
-        else: 
+        else:
             return "error"
 
-
     # TODO(Project 1): Implement additional routes according to the project requirements.
-        

@@ -2,32 +2,36 @@ from google.cloud import storage
 import json
 
 # TODO(Project 1): Implement Backend according to the requirements.
+
+
 class Backend:
 
     def __init__(self):
         pass
-        
-    #changed to check id instead of name
+
+    # changed to check id instead of name
     def get_wiki_page(self, id):
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+        blobs = storage_client.list_blobs(
+            "nrjcontent", prefix="pages/", delimiter="/")
         for blob in blobs:
             page_data = json.loads(blob.download_as_string(client=None))
             if id == int(page_data["id"]):
                 return page_data
 
-    #changed to return full list of page data instead of names
+    # changed to return full list of page data instead of names
     def get_all_pages(self):
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+        blobs = storage_client.list_blobs(
+            "nrjcontent", prefix="pages/", delimiter="/")
         all_pages_data = []
         for blob in blobs:
             page_data = json.loads(blob.download_as_string(client=None))
             all_pages_data.append(page_data)
         return all_pages_data
 
-    def upload(self,bucket_name,blob_name):
-        
+    def upload(self, bucket_name, blob_name):
+
         storage_client = storage.Client()
 
         bucket = storage_client.bucket(bucket_name)
@@ -62,11 +66,12 @@ class Backend:
         else:
             return False
 
-
-
-    def get_image(self,bucket_name,blob_name):
-        # imageObj = open(blob_name, 'rb')
-        # imageBytes = imageObj.read()
-
-        # return send_file(io.BytesIO(imageBytes))
-        pass
+    def get_image(self):
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs(
+            "nrjcontent", prefix="pages/images/authors", delimiter="/")
+        image_data = []
+        for blob in blobs:
+            data = blob.download_to_file()
+            image_data.append(data)
+        return image_data 

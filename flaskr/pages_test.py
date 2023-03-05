@@ -15,11 +15,26 @@ def app():
 def client(app):
     return app.test_client()
 
-# TODO(Checkpoint (groups of 4 only) Requirement 4): Change test to
-# match the changes made in the other Checkpoint Requirements.
+def test_home_page(client):
+    resp = client.get("/")
+    #html = resp.data.decode()
+    assert resp.status_code == 200
+    assert b"This is main.html" in resp.data
+    assert b"A familiar beam of light shines down. The beam of light descends onto a stage. Lightning flashes to reveal Prince Charming riding his valiant steed Chauncey across the open plains. The wind blows back his golden mane." in resp.data
+
+"""def test_pages_page(client):
+    resp = client.get("/pages")
+    assert resp.status_code == 200
+    assert b"Hello, World!\n" in resp.data
+    
+def test_home_page(client):
+    resp = client.get("/about")
+    assert resp.status_code == 200
+    assert b"Hello, World!\n" in resp.data
+
+
 def test_home_page(client):
     resp = client.get("/")
     assert resp.status_code == 200
     assert b"Hello, World!\n" in resp.data
-
-# TODO(Project 1): Write tests for other routes.
+# TODO(Project 1): Write tests for other routes."""
