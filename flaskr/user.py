@@ -1,0 +1,12 @@
+from google.cloud import storage
+import json
+from flask_login import UserMixin
+
+class User (UserMixin):
+    def __init__(self, username):
+        self.username = username
+    def get_id(self):
+        return self.username
+
+
+

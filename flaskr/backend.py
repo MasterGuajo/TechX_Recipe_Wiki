@@ -7,7 +7,7 @@ import io
 
 import json
 
-#TODO(Project 1): Implement Backend according to the requirements.
+# TODO(Project 1): Implement Backend according to the requirements.
 class Backend:
 
     def __init__(self):
@@ -48,6 +48,8 @@ class Backend:
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(username)
+        if blob.exists():
+            return False
         with blob.open("w") as f:
             f.write(json.dumps(new_user))
         return storage.Blob(bucket=bucket, name=username).exists(storage_client)
