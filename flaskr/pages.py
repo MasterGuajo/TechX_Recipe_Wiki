@@ -10,7 +10,7 @@ import base64
 import io
 
 # Extension that the user is allowed to upload
-ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf'}
+ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'}
 
 """Route Manager for Program
 
@@ -76,7 +76,9 @@ def make_endpoints(app):
     """
     @app.route("/about", methods=['GET'])
     def about():
+        
         author_images = ['plswork.jpg','cat.jpg','hamster.png']
+        # author_images = ['cat1.jpg','cat2.jpg','cat3.jpg']
 
         for index,file_name in enumerate(author_images):
             image = Backend.get_image(None,file_name)
@@ -96,8 +98,17 @@ def make_endpoints(app):
     # Checks that the file being uploaded is allowed
     def allowed_file(filename):
         return '.' in filename and \
-            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+            filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+    """ Checks that a given file has an allowed format
 
+    Checks if the termination of a file is in the specified list of allowed formats
+
+    Args:
+        Takes in a file
+
+    Returns:
+        Returns true or false depending on if its valid or not
+    """
     # Here the users upload their files
     @app.route("/upload", methods=['GET', 'POST'])
     @login_required
@@ -107,14 +118,24 @@ def make_endpoints(app):
 
             # Check that it's a valid file
             if 'file' not in request.files:
-                flash('No file part')
-                return redirect(request.url)
+                # flash('No file part')
+                message = "No file part"
+                return render_template("upload.html",message = message, name = current_user.username)
+                # return redirect(request.url)
 
             file = request.files['file']
 
             if file.filename == '':
-                flash('No selected file')
-                return redirect(request.url)
+
+                message = "No selected file"
+                return render_template("upload.html",message = message, name = current_user.username)
+
+                # flash('No selected file')
+                # return redirect(request.url)
+            
+            if not(allowed_file(file.filename)):
+                message = "Not a valid file format"
+                return render_template("upload.html",message = message, name = current_user.username)
 
             # If valid, we pass it to the backend in order to upload to our bucket
             if file and allowed_file(file.filename):
@@ -128,6 +149,22 @@ def make_endpoints(app):
                 return render_template("upload.html",message = message, name = current_user.username)
 
         return render_template("upload.html", name = current_user.username)
+    
+    """ Uploads file to specified path in bucket
+
+    Using a POST method, we obtain from the user a file that will be uploaded in the bucket. Before uploading,
+    we check that its a valid file and that they selected one. If it passes the test, we can upload it. The user is required to 
+    be logged in in order to access this
+
+    Args:
+        Using POST we obtain a file
+    
+    Uses:
+        allowed_file in order to check that the file is valid
+
+    Returns:
+        A render template of the HTML along with a custom message displaying whether or not the file was uploaded succesfully
+    """
 
     @app.route("/signup")
     def signup():
