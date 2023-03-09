@@ -7,7 +7,6 @@ from unittest import mock
 from unittest.mock import MagicMock
 import pytest
 from flaskr.user import User
-
 import io
 from io import BytesIO
 

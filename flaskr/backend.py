@@ -122,7 +122,7 @@ class Backend:
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(existing_user.username)
         if blob.exists():
-            user_data = json.loads(blob.download_as_string(client=None))
+            user_data = json.loads(blob.download_as_bytes(client=None))
             if user_data["password"] == password:
                 return True
             else:
