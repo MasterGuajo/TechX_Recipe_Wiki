@@ -11,7 +11,7 @@
             <li><a class="navbar_link" href="/about">About</a></li>
             {% if current_user.is_authenticated %}
             <li><a class="navbar_link" href="/upload">Upload</a></li>
-            <li><a> | {{ name }} | </a></li>
+            <li class="username"> | {{ name }} | </li>
             {% endif %}
             {% if not current_user.is_authenticated %}
             <li><a class="navbar_link" href="/signup">Sign Up</a></li>
@@ -59,6 +59,14 @@
         color: white;
     }
 
+    .username {
+        color: #CBE4DE;
+        font-family: 'Golos Text', sans-serif;
+        font-size: 22px;
+        border-radius: 2px;
+        
+    }
+
     .break {
         flex-basis: 100%;
         padding-bottom: 1vh;
@@ -66,6 +74,9 @@
 
     li {
         float: left;
+
+        text-decoration: none;
+
     }
 
     .navbar_link {

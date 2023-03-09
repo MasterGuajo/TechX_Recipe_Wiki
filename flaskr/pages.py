@@ -1,6 +1,7 @@
 from flask import render_template, request, flash, redirect, jsonify
 from flaskr.backend import Backend
 import hashlib
+from google.cloud import storage
 import os
 from flask import Flask, flash, request, redirect, url_for, send_file
 from werkzeug.utils import secure_filename
@@ -10,8 +11,8 @@ import base64
 import io
 
 # Extension that the user is allowed to upload
-ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'}
-
+#ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'}
+ALLOWED_EXTENSIONS = {'json'}
 """Route Manager for Program
 
 Uses route decorators to designate app's routes. Returns jinja html templates
@@ -21,7 +22,6 @@ to load pages.
 def make_endpoints(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_message = u"Please log in first."
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -78,7 +78,6 @@ def make_endpoints(app):
     def about():
         
         author_images = ['plswork.jpg','cat.jpg','hamster.png']
-        # author_images = ['cat1.jpg','cat2.jpg','cat3.jpg']
 
         for index,file_name in enumerate(author_images):
             image = Backend.get_image(None,file_name)
@@ -168,36 +167,69 @@ def make_endpoints(app):
 
     @app.route("/signup")
     def signup():
+        """
+        Renders sign up form template.
+        """
         return render_template("signup.html")
 
     @app.route("/check_signup", methods=['POST'])
     def check_signup():
+        """Acquire form data, encrypt password,
+        create User object, and call backend to
+        authenticate said User. If backend successfully
+        authenticates user, redirect back to home. 
+        Otherwise return error message.   
+
+        Args:
+          user_name: String that holds username.
+          password: String that holds password with prefix to be hashed.
+        """
+        backend = Backend(storage.Client())
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
         flask_user = User(user_name)
-        if Backend.sign_up(None, user, user_name):
-            def login():
-                return render_template("login.html")
+        if backend.sign_up(flask_user, str(hash)):
+            login_user(flask_user)
+            return redirect('/home')
+        else:
+            return "Sign Up Failed."
+        
+
+    @app.route("/login")
+    def login():
+        """
+        Renders login form template.
+        """
+        return render_template("login.html")
 
     @app.route("/check_login", methods=['POST'])
     def check_login():
+        """Acquire form data, encrypt password,
+        create User object, and call backend to
+        authenticate said User. If backend successfully
+        authenticates user, redirect back to home. 
+        Otherwise return error message.   
+
+        Args:
+          user_name: String that holds username.
+          password: String that holds password with prefix to be hashed.
+        """
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        user = {"User" : user_name, "Pass" : str(hash)}
         flask_user = User(user_name)
-        if Backend.sign_in(None,user, user_name):
+        if Backend.sign_in(None, flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
         else: 
-            return "error"
+            return "Login Failed"
 
     @app.route("/logout")
     @login_required
     def logout():
+        """
+        Renders login form template.
+        """        
         logout_user()
         return redirect('/home')
-
-
-    # TODO(Project 1): Implement additional routes according to the project requirements.

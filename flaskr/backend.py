@@ -18,6 +18,8 @@ from flaskr.backend import Backend
 
 class Backend:
 
+    '''def __init__(self,client):
+        self.client = client'''
     
     def __init__(self, storage_client = storage.Client()):
         self.storage_client = storage_client
@@ -70,9 +72,8 @@ class Backend:
 
         return
     """ Uploads allowed files into bucket
-
-    After checking that its a valid file from pages.py, we take in the object we would
-    like to upload and specfiy the route in which our file will be stored
+        After checking that its a valid file from pages.py, we take in the object we would
+        like to upload and specfiy the route in which our file will be stored
 
     Args:
         bucket_name: Shows us where the object will be stored
@@ -82,29 +83,50 @@ class Backend:
         Doesn't return anything as we are only communicating it with our backend
 
     """
-    def sign_up(self, new_user, username):
+
+
+        #storage_client = self.client
+
+    def sign_up(self, new_user, password):
+        """If username and password combination do not exist,
+        create a blob with said information and send it to the
+        userpass bucket to keep. Return if blobs exists after writing, 
+        or false if it already existed.                       
+
+        Args:
+          new_user: User object that holds username.
+          password: String that holds hashed password with prefix.
+        """
+        #storage_client = storage.Client()
+        bucket = self.storage_client.bucket("userpass")
+        blob = bucket.blob(new_user.username)
+        info = {"password" : password}
+        if blob.exists():
+            return False                                 
+        with blob.open("w") as f:
+            f.write(json.dumps(info))
+        return storage.Blob(bucket=bucket, name=new_user.username).exists(self.storage_client)
+
+    def sign_in(self, existing_user,password):
+        """If blob with username do not exist,
+        return False. Return true only if blob
+        with usename exists and the blob data 
+        matches the username and password 
+        combination.         
+
+        Args:
+          existing_user: User object that holds username.
+          password: String that holds hashed password with prefix.
+        """
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
-        blob = bucket.blob(username)
+        blob = bucket.blob(existing_user.username)
         if blob.exists():
-            return False
-        with blob.open("w") as f:
-            f.write(json.dumps(new_user))
-        return storage.Blob(bucket=bucket, name=username).exists(storage_client)
-
-    def sign_in(self, existing_user, username):
-        '''storage_client = storage.Client()
-        blobs = storage_client.list_blobs("userpass")
-        for blob in blobs:
-            if json.dumps(existing_user) == blob.download_as_string(client=None):
+            user_data = json.loads(blob.download_as_string(client=None))
+            if user_data["password"] == password:
                 return True
             else:
-                return False'''
-        storage_client = storage.Client()
-        bucket = storage_client.bucket("userpass")
-        blob = bucket.blob(username)
-        if blob.exists():
-            return True
+                return False
         else:
             return False
 
