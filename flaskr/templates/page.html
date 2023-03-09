@@ -1,17 +1,14 @@
 {% extends "navbar.html" %}
 
 {% block content %}
-<div>
-    <div class="Header">
-    </div>
+<!DOCTYPE html>
+<html>
 
-    <div>
-        <h2>{{page_data["name"]}}</h2>
-        <h3>{{page_data["game"]}}</h3>
-        <h4>{{page_data["cate"]}}</h4>
-    </div>
-
-    <div>
+<div id="page_main_div" class="main_div">
+    <div class="dishbanner">
+        <h2 class="dishname">{{page_data["name"]}}</h2>
+        <h3 class="dishgame">{{page_data["game"]}}</h3>
+        <h4 class="dishcate">{{page_data["cate"]}}</h4>
         <p>
             {{page_data["desc"]}}
             <br>
@@ -19,7 +16,7 @@
         </p>
     </div>
 
-    <div>
+    <div class="dishrecipe">
         <ul>
             {% for ingr in page_data["ingr"]: %}
             <li>{{ingr}}</li> <br>
@@ -31,7 +28,10 @@
             {% endfor %}
         </ol>
     </div>
-
-
 </div>
+
+
+</body>
+
+</html>
 {% endblock %}

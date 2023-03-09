@@ -1,15 +1,25 @@
 {% extends "navbar.html" %}
 {% block content %}
 <html>
-    <h1>Sign Up Page</h1>
-    <form action='/check_signup' method='post'>
-    <label for="Username">Username:</label>
-    <input name="Username" type="text" required><br><br>
-    <label for="Password">Password:</label>
-    <input name="Password" type="password" required><br><br>
-    <input type="submit" value="Create Account">
-    </form>
+    <div class="signup_div">
+        <h1>Sign Up Page</h1>
+        <form action='/check_signup' method='post'>
+        <label for="Username">Username:</label>
+        <input name="Username" type="text" required><br><br>
+        <label for="Password">Password:</label>
+        <input name="Password" type="password" required><br><br>
+        <input type="submit" value="Create Account">
+        </form>
+    
+        <p><a href="/login"> Log In Here</a></p>
+    </div>
 
-    <p><a href="/login"> Log In Here</a></p>
 </html>
+
+<style>
+.signup_div {
+    text-align: center;
+    padding-top: 5vh;
+}
+</style>
 {% endblock %}

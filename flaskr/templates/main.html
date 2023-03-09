@@ -5,21 +5,41 @@
 <html>
 
 <head>
-    <head>
-        <title>Gamer Dessert Wiki</title>
-        <link rel="stylesheet" href="main.css">
-    </head>
+    <title>Gamer Dessert Wiki</title>
+    <link rel="stylesheet" href="main.css">
 </head>
 
-<body>
-    <div>
-        
-        Welcome to our video game dessert wiki!
 
-        Have a nice stay, <a href="/pages">click me</a> if you're not sure where to go.
-                         
-    </div>
+<body>
+    <div id="home_main_div" class="main_div">
+        <p class="home_desc">
+            {% if current_user.is_authenticated %}
+            Hi {{ name }}!
+            {% endif %}
+
+            Welcome to our video game dessert wiki! <br>
+
+            Have a nice stay, <a href="/pages">click me</a> if you're not sure where to go.
+        </p>
+
+
 </body>
 
 </html>
+<style>
+    .main_div {
+        height: 100vh;
+        outline-style: solid;
+        outline-color: #2C3333;
+        outline-width: 2px;
+        margin: 10px;
+    }
+    .home_desc{
+        font-family: 'Golos Text', sans-serif;
+        font-size: 30px;
+        text-align: center;
+        padding: inline 20vw;
+        padding-top: 10vh;
+    }
+</style>
 {% endblock %}

@@ -1,19 +1,57 @@
 {% extends "navbar.html" %}
 
 {% block content %}
-<h3>About this Wiki</h3>
 
-<p>This wiki was created to share our passion of video game desserts with the world in a convenient way.</p>
+<div id="about_main_div" class="main_div">
+    <h3>About this Wiki</h3>
 
-<h3>Your Authors</h3>
+    <p>This wiki was created to share our passion of video game desserts with the world in a convenient way.</p>
 
-<h4>Nicole Roman</h4>
-<img src={{author_images[0]}} alt="">
-<h4>Rodrigo Lopes</h4>
-<img src={{author_images[1]}} alt="">
-<h4>Jorge Garcia</h4>
-<img src={{author_images[2]}} alt="">
+    <h3>Your Authors - Team NRJ</h3>
+    <div class="authors_container">
+        <div>
+            <h4>Nicole Roman</h4>
+            <img src="data:image/jpeg;base64,{{ show[0] }}" alt="">
+        </div>
+        <div>
+            <h4>Rodrigo Lopes</h4>
+            <img src="data:image/jpeg;base64,{{ show[1] }}" alt="">
+        </div>
+        <div>
+            <h4>Jorge Garcia</h4>
+            <img src="data:image/jpeg;base64,{{ show[2] }}" alt="">
+        </div>
+    </div>
 
+</div>
 
+<style>
+    .main_div {
+        text-align: center;
+        font-family: 'Golos Text', sans-serif;
+        font-size: 30px;
+    }
+    .main_div h3 {
+        padding-block: 5vh;
+    }
+
+    .authors_container {
+        display: flex;
+        justify-content: center;
+    }
+    .authors_container div {
+        margin-inline: 5vw;
+    }
+    .main_div h4 {
+        font-size: 25px;
+
+    }
+    .main_div img {
+        width: 20vh;
+        height: 20vh;
+        border-radius: 5px;
+        background-color: #0E8388;
+        padding: 5px 5px 5px 5px;
+    }
+</style>
 {% endblock %}
-
