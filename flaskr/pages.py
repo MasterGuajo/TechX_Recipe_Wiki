@@ -1,7 +1,7 @@
 from flask import render_template, request, flash, redirect, jsonify
 from flaskr.backend import Backend
 import hashlib
-
+from google.cloud import storage
 # Stuff imported for file upload
 # from google.cloud import storage
 import os
@@ -27,7 +27,6 @@ chmod a+x run-flask.sh
 def make_endpoints(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_message = u"Please log in first."
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -105,42 +104,70 @@ def make_endpoints(app):
 
     @app.route("/signup")
     def signup():
+        """
+        Renders sign up form template.
+        """
         return render_template("signup.html")
 
     @app.route("/check_signup", methods=['POST'])
     def check_signup():
+        """Acquire form data, encrypt password,
+        create User object, and call backend to
+        authenticate said User. If backend successfully
+        authenticates user, redirect back to home. 
+        Otherwise return error message.   
+
+        Args:
+          user_name: String that holds username.
+          password: String that holds password with prefix to be hashed.
+        """
+        backend = Backend(storage.Client())
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"] 
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        user = {user_name : str(hash)}
         flask_user = User(user_name)
-        if Backend.sign_up(None,user, user_name):
+        if backend.sign_up(flask_user, str(hash)):
             login_user(flask_user)
-            return redirect('/')
+            return redirect('/home')
         else:
-            return "error"
+            return "Sign Up Failed."
         
 
     @app.route("/login")
     def login():
+        """
+        Renders login form template.
+        """
         return render_template("login.html")
 
     @app.route("/check_login", methods=['POST'])
     def check_login():
+        """Acquire form data, encrypt password,
+        create User object, and call backend to
+        authenticate said User. If backend successfully
+        authenticates user, redirect back to home. 
+        Otherwise return error message.   
+
+        Args:
+          user_name: String that holds username.
+          password: String that holds password with prefix to be hashed.
+        """
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"] 
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        user = {"User" : user_name, "Pass" : str(hash)}
         flask_user = User(user_name)
-        if Backend.sign_in(None,user, user_name):
+        if Backend.sign_in(None, flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
         else: 
-            return "error"
+            return "Login Failed"
 
     @app.route("/logout")
     @login_required
     def logout():
+        """
+        Renders login form template.
+        """        
         logout_user()
         return redirect('/home')
 
