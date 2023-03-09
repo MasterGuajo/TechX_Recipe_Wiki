@@ -1,22 +1,17 @@
 from flaskr import create_app
 from flaskr.user import User
 from flask_login import FlaskLoginClient
-
 import unittest
 from unittest.mock import patch
 from unittest import mock
-
+from unittest.mock import MagicMock
 import pytest
 from flaskr.user import User
-from unittest.mock import MagicMock
-from flask_login import FlaskLoginClient
-from unittest.mock import patch
-
 import io
 from io import BytesIO
 
-# See https://flask.palletsprojects.com/en/2.2.x/testing/ 
-# for more info on testing
+"""Tests for pages."""
+
 @pytest.fixture
 def app():
     app = create_app({
@@ -28,6 +23,55 @@ def app():
 def client(app):
     app.test_client_class = FlaskLoginClient    
     return app.test_client()
+
+def test_nav(client):
+    resp = client.get("/")
+    assert resp.status_code == 200
+    assert b'<div id="nav_main_div">' in resp.data
+"""This tests the page loading of the navigation bar template.
+Run this test by running `pytest -v` in the /project directory.
+"""
+
+def test_home(client):
+    resp = client.get("/")
+    assert resp.status_code == 200
+    assert b'<div id="home_main_div" class="main_div">' in resp.data
+"""This tests the page loading of the homepage template.
+Run this test by running `pytest -v` in the /project directory.
+"""
+
+def test_aliases(client):
+    slash = client.get("/").data
+    home = client.get("/home").data
+    index = client.get("/index").data
+    assert slash == home == index
+"""This tests the page aliases for the homepage (/, /home, /index).
+Run this test by running `pytest -v` in the /project directory.
+"""
+
+def test_pages(client):
+    resp = client.get("/pages")
+    assert resp.status_code == 200
+    assert b'<div id="pages_main_div" class="main_div">' in resp.data
+"""This tests the page loading of the wiki pages overview template.
+Run this test by running `pytest -v` in the /project directory.
+"""
+
+def test_about(client):
+    resp = client.get("/about")
+    assert resp.status_code == 200
+    assert b'<div id="about_main_div" class="main_div">' in resp.data
+"""This tests the page loading of the about page template.
+Run this test by running `pytest -v` in the /project directory.
+"""
+
+def test_page(client):
+    resp = client.get("/pages/0")
+    assert resp.status_code == 200
+    assert b'<div id="page_main_div" class="main_div">' in resp.data
+"""This tests the page loading of each individual recipe page's template.
+Run this test by running `pytest -v` in the /project directory.
+"""
 
 @pytest.fixture
 def user_example():
@@ -105,8 +149,6 @@ def test_logout(app, user_example):
             assert response.status_code == 200
             assert not "Hi testin!" in response.text
 
-
-
 def test_upload_no_file(app):
     app.test_client_class = FlaskLoginClient
 
@@ -176,7 +218,7 @@ def test_upload_successful(app):
 
         with app.test_client(user=user) as client:
 
-            data = {'file': (BytesIO(b"abcdef"), 'test.jpg')}
+            data = {'file': (BytesIO(b"abcdef"), 'test.json')}
           
             response = client.post('/upload',data = data)
             print(response.text)

@@ -1,13 +1,19 @@
 from google.cloud import storage
 from flask import Flask, flash, request, redirect, url_for, send_file
-
-# Imports for get_image
 import base64
 import io
-
 import json
 
-# TODO(Project 1): Implement Backend according to the requirements.
+"""Backend Class for Program, Retrieves Data from Cloud Storage for Use.
+
+Typical usage example:
+
+from flaskr.backend import Backend
+
+  backend = Backend(0)
+  Backend.get_wiki_page(None, 0)
+"""
+
 class Backend:
 
     '''def __init__(self,client):
@@ -20,25 +26,41 @@ class Backend:
     #changed to check id instead of name
     def get_wiki_page(self, id):
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+        blobs = storage_client.list_blobs(
+            "nrjcontent", prefix="pages/", delimiter="/")
         for blob in blobs:
-            page_data = json.loads(blob.download_as_string(client=None))
+            page_data = json.loads(blob.download_as_bytes(client=None))
             if id == int(page_data["id"]):
                 return page_data
+    """Function for retrieving a page with specific ID.
 
-    #changed to return full list of page data instead of names
+    Searches the content/pages bucket for a blob matching a specific id parameter. Returns
+    a JSON object with the data of object with that id.
+
+    Returns:
+        Populated JSON object.
+    """
+
     def get_all_pages(self):
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+        blobs = storage_client.list_blobs(
+            "nrjcontent", prefix="pages/", delimiter="/")
         all_pages_data = []
         for blob in blobs:
-            page_data = json.loads(blob.download_as_string(client=None))
+            page_data = json.loads(blob.download_as_bytes(client=None))
             all_pages_data.append(page_data)
         return all_pages_data
+    """Function for retrieving all page objects.
 
-    def upload(self,bucket_name,blob_name):
-        
-        storage_client = storage.Client()        
+    Adds all JSON objects within the the content/pages bucket into a list to return.
+
+    Returns:
+        List of all page JSON objects.
+    """
+
+    def upload(self, bucket_name, blob_name):
+
+        storage_client = storage.Client()
 
         bucket = storage_client.bucket(bucket_name)
 
@@ -98,7 +120,7 @@ class Backend:
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(existing_user.username)
         if blob.exists():
-            user_data = json.loads(blob.download_as_string(client=None))
+            user_data = json.loads(blob.download_as_bytes(client=None))
             if user_data["password"] == password:
                 return True
             else:
@@ -106,7 +128,7 @@ class Backend:
         else:
             return False
 
-    def get_image(self,blob_name):
+    def get_image(self, blob_name):
 
         storage_client = storage.Client()
         bucket = storage_client.bucket("nrjcontent")

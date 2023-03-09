@@ -5,25 +5,38 @@
 <html>
 
 <head>
-    <head>
-        <!-- TODO(Checkpoint Requirement 3): Change the title and content of your wiki.-->
-        <title>Project NRJ Checkpoint</title>
-    </head>
+    <title>Video Game Dessert Wiki</title>
 </head>
 
+
 <body>
-    <!-- TODO(Project 1): Implement routes. -->
-    {% if current_user.is_authenticated %}
-        Hi {{ name }}!
-    {% endif %}
-    <div>       
-        <!-- TODO(Checkpoint Requirement 3): Change the title and content of your wiki.-->
-        This is main.html <br>
-                         
-        A familiar beam of light shines down. The beam of light descends onto a stage. Lightning flashes to reveal Prince Charming riding his valiant steed Chauncey across the open plains. The wind blows back his golden mane.
-                         
-    </div>
+    <div id="home_main_div" class="main_div">
+        <p class="home_desc">
+            {% if current_user.is_authenticated %}
+            Hi {{ name }}!
+            {% endif %}
+
+            Welcome to our video game dessert wiki! <br>
+
+            Have a nice stay, <a href="/pages">click me</a> if you're not sure where to go.
+        </p>
 </body>
 
 </html>
+<style>
+    .main_div {
+        height: 100vh;
+        outline-style: solid;
+        outline-color: #2C3333;
+        outline-width: 2px;
+        margin: 10px;
+    }
+    .home_desc{
+        font-family: 'Golos Text', sans-serif;
+        font-size: 30px;
+        text-align: center;
+        padding: inline 20vw;
+        padding-top: 10vh;
+    }
+</style>
 {% endblock %}

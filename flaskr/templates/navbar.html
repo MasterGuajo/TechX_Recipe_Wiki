@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html>
-    <body>
-        <ul>
-            <li><a href="/home">Main Kitchen</a></li>
-            <li><a href="/pages">Recipes</a></li>
-            <li><a href="/about">About</a></li>
+
+<body>
+    <div id="nav_main_div">
+        <ul class="nav_list">
+            <h1 class="sitename">Video Game Dessert Wiki</h1>
+            <div class="break"></div>
+            <li><a class="navbar_link" href="/home">Home</a></li>
+            <li><a class="navbar_link" href="/pages">Recipes</a></li>
+            <li><a class="navbar_link" href="/about">About</a></li>
             {% if current_user.is_authenticated %}
-                <li><a href="/upload">Upload</a></li>
-                <li><a> | {{ name }} | </a></li>
-            {% endif %} 
-            {% if not current_user.is_authenticated %}
-                <li><a href="/signup">SignUp</a></li>
-                <li><a href="/login">LogIn</a></li>
+            <li><a class="navbar_link" href="/upload">Upload</a></li>
+            <li class="username"> | {{ name }} | </li>
             {% endif %}
-            {% if current_user.is_authenticated %}<li><a href="/logout">LogOut</a></li>{% endif %}
+            {% if not current_user.is_authenticated %}
+            <li><a class="navbar_link" href="/signup">Sign Up</a></li>
+            <li><a class="navbar_link" href="/login">Log In</a></li>
+            {% endif %}
+            {% if current_user.is_authenticated %}<li><a class="navbar_link" href="/logout">LogOut</a></li>{% endif %}
         </ul>
-    </body>
+    </div>
+
+</body>
+
 </html>
-   
+
 <div>
     {% block content %}
 
@@ -26,29 +33,65 @@
 
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Golos+Text&display=swap');
 
-    ul {
-        list-style-type: none;
-        background-color: #ebd5a9;
-        padding: 0;
+
+    * {
         margin: 0;
-        overflow: hidden;
+        padding: 0;
     }
-    
-    li {
-        float: left;
+    body {
+        background-color: #CBE4DE;
     }
 
-    a {
-        color: #ba91ed;
-        display: block;
-        padding: 10px 15px;
+    .nav_list {
+        display: flex;
+        list-style-type: none;
+        background-image: linear-gradient(to right, #406565, #2C3333, #336f6f);
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 2vh 0 2vh 0;
+    }
+
+    .sitename {
+        font-family: 'Press Start 2P', cursive;
+        color: white;
+    }
+
+    .username {
+        color: #CBE4DE;
+        font-family: 'Golos Text', sans-serif;
         font-size: 22px;
-        text-decoration: none;
+        border-radius: 2px;
         
     }
 
-    a:hover {
-        background-color: #c8b6de;
+    .break {
+        flex-basis: 100%;
+        padding-bottom: 1vh;
+    }
+
+    li {
+        float: left;
+
+        text-decoration: none;
+
+    }
+
+    .navbar_link {
+        color: #CBE4DE;
+        display: block;
+        padding: 10px 15px;
+        margin-inline: 10px;
+        font-family: 'Golos Text', sans-serif;
+        font-size: 22px;
+        text-decoration: none;
+        border-radius: 2px;
+        box-shadow: 1px 1px 3px black;
+    }
+
+    .navbar_link:hover {
+        background-color: #0E8388;
     }
 </style>
