@@ -11,8 +11,9 @@ import base64
 import io
 
 # Extension that the user is allowed to upload
-#ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'}
+#ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'} 
 ALLOWED_EXTENSIONS = {'json'}
+
 """Route Manager for Program
 
 Uses route decorators to designate app's routes. Returns jinja html templates

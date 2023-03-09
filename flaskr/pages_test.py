@@ -28,32 +28,50 @@ def test_nav(client):
     resp = client.get("/")
     assert resp.status_code == 200
     assert b'<div id="nav_main_div">' in resp.data
+"""This tests the page loading of the navigation bar template.
+Run this test by running `pytest -v` in the /project directory.
+"""
 
 def test_home(client):
     resp = client.get("/")
     assert resp.status_code == 200
     assert b'<div id="home_main_div" class="main_div">' in resp.data
+"""This tests the page loading of the homepage template.
+Run this test by running `pytest -v` in the /project directory.
+"""
 
 def test_aliases(client):
     slash = client.get("/").data
     home = client.get("/home").data
     index = client.get("/index").data
     assert slash == home == index
+"""This tests the page aliases for the homepage (/, /home, /index).
+Run this test by running `pytest -v` in the /project directory.
+"""
 
 def test_pages(client):
     resp = client.get("/pages")
     assert resp.status_code == 200
     assert b'<div id="pages_main_div" class="main_div">' in resp.data
+"""This tests the page loading of the wiki pages overview template.
+Run this test by running `pytest -v` in the /project directory.
+"""
 
 def test_about(client):
     resp = client.get("/about")
     assert resp.status_code == 200
     assert b'<div id="about_main_div" class="main_div">' in resp.data
+"""This tests the page loading of the about page template.
+Run this test by running `pytest -v` in the /project directory.
+"""
 
 def test_page(client):
     resp = client.get("/pages/0")
     assert resp.status_code == 200
     assert b'<div id="page_main_div" class="main_div">' in resp.data
+"""This tests the page loading of each individual recipe page's template.
+Run this test by running `pytest -v` in the /project directory.
+"""
 
 @pytest.fixture
 def user_example():

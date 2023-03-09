@@ -6,8 +6,6 @@ import json
 
 """Backend Class for Program, Retrieves Data from Cloud Storage for Use.
 
-Backend Class contains
-
 Typical usage example:
 
 from flaskr.backend import Backend

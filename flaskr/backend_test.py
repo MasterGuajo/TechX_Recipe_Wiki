@@ -114,22 +114,27 @@ Returns:
 def test_get_all_pages_min():
     data = Backend.get_all_pages(None)
     assert len(data) > 0
+"""This tests the get_all_pages method retrieving at least one value.
+Run this test by running `pytest -v` in the /project directory.
+"""
 
-#I believe this is technically not a unit test bc the pages are not static
+# I believe this is technically not a unit test, but was unsure--
+# of how to setup the test since the pages are dynamic.
 def test_get_all_pages_content():
     data = Backend.get_all_pages(None)
     assert data[0]["name"] == "Bunny Dango"
     assert data[1]["name"] == "Butterscotch Cinnamon Pie"
+"""This tests the get_all_pages method retrieving all content in the right order.
+Run this test by running `pytest -v` in the /project directory.
+"""
 
 def test_get_wiki_page():
     page_data = Backend.get_wiki_page(None, 2)
     assert page_data["id"] == '2'
     assert page_data["name"] == "Rare Candy"
-    
-def test_get_wiki_page_wrong():
-    page_data = Backend.get_wiki_page(None, 2)
-    assert page_data["id"] == '2'
-    assert page_data["name"] != "Not so Rare Candy"
+"""This tests the get_wiki_page method retrieving the correct JSON object at specified id.
+Run this test by running `pytest -v` in the /project directory.
+"""  
 
 def test_get_wiki_page_none():
     page_data = Backend.get_wiki_page(None, -1)
@@ -137,3 +142,7 @@ def test_get_wiki_page_none():
         assert page_data["id"] == "This cannot be accessed"
     except TypeError:
         pass
+"""This tests the get_wiki_page method causing an exception if the 
+id it is trying to access does not exist.
+Run this test by running `pytest -v` in the /project directory.
+"""  
