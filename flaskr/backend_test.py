@@ -14,7 +14,7 @@ import hashlib
 # TODO(Project 1): Write tests for Backend methods.
 
 def test_correct_signup():
-    """Tests signup route/function when user attempts to create an
+    """Tests signup function when user attempts to create an
         account that did not previously exist. Used MagicMock to
         prevent from creating a new account everytime we test.
     """
@@ -31,7 +31,7 @@ def test_correct_signup():
     assert blob.open.return_value.write.assert_called_once
 
 def test_wrong_signup():
-    """Tests signup route/function when user attempts to create an
+    """Tests signup function when user attempts to create an
         account that already exists. Used MagicMock so we don't 
         have to check if the account truly exists or not.
     """
@@ -46,7 +46,7 @@ def test_wrong_signup():
     assert not backend.sign_up(user, 'password')
 
 def test_correct_signin():
-    """Tests signin route/function when user attempts to login 
+    """Tests signin function when user attempts to login 
         an account that already exists and the password is correct. 
     """
     user = User('new')
@@ -56,7 +56,7 @@ def test_correct_signin():
     assert test == True
 
 def test_wrong_signin():
-    """Tests signin route/function when user attempts to login 
+    """Tests signin function when user attempts to login 
         an account that does not exist. 
     """
     storage_client = MagicMock()
@@ -71,7 +71,7 @@ def test_wrong_signin():
 
 
 def test_wrong_password_signin():
-    """Tests signin route/function when user attempts to login 
+    """Tests signin function when user attempts to login 
         an account that already exists BUT the password is wrong. 
     """
     user = User('new')

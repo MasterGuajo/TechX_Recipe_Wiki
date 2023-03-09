@@ -35,18 +35,24 @@ def user_example():
     return user
 
 def test_correct_signup(app, user_example):
+    """Tests signup route when user attempts to create an
+        account that did not previously exist. Used MagicMock to
+        prevent from creating a new account everytime we test.
+    """
     app.test_client_class = FlaskLoginClient
     with patch('flaskr.backend.Backend.sign_up'):
         with app.test_client() as client:
             data = {"Username" : 'testing' , "Password" : 'somepassword'}
             response = client.post('/check_signup', data = data) 
             response = client.get('/')
-            print("RESPONSE HERE:" + response.text)
 
             assert response.status_code == 200
             assert "Hi testing!" in response.text
 
 def test_wrong_signup(app, user_example):
+    """Tests signup route when user attempts to create an
+        account with the wrong parameters.
+    """
     app.test_client_class = FlaskLoginClient
     with patch('flaskr.backend.Backend.sign_up'):
         with app.test_client() as client:
@@ -59,6 +65,9 @@ def test_wrong_signup(app, user_example):
             assert "Bad Request" in response.text
 
 def test_correct_login(app, user_example):
+    """Tests login route when user attempts to login with an
+        account that already exists and the password is correct.
+    """
     app.test_client_class = FlaskLoginClient
     with patch('flaskr.backend.Backend.sign_in'):
         with app.test_client() as client:
@@ -70,6 +79,9 @@ def test_correct_login(app, user_example):
             assert "Hi Nicole!" in response.text
 
 def test_wrong_login(app, user_example):
+    """Tests login route when user attempts to login with an
+        account that already exists but the parameters are wrong.
+    """
     app.test_client_class = FlaskLoginClient
     with patch('flaskr.backend.Backend.sign_in'):
         with app.test_client() as client:
@@ -82,6 +94,9 @@ def test_wrong_login(app, user_example):
             assert "Bad Request" in response.text
 
 def test_logout(app, user_example):
+    """Tests logout route when user attempts to logout from 
+       their account.
+    """
     app.test_client_class = FlaskLoginClient
     with app.test_client() as client:
             response = client.post('/logout') 
