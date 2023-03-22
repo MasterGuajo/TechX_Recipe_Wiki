@@ -3,7 +3,6 @@ from flask import Flask, flash, request, redirect, url_for, send_file
 import base64
 import io
 import json
-
 """Backend Class for Program, Retrieves Data from Cloud Storage for Use.
 
 Typical usage example:
@@ -14,24 +13,25 @@ from flaskr.backend import Backend
   Backend.get_wiki_page(None, 0)
 """
 
-class Backend:
 
+class Backend:
     '''def __init__(self,client):
         self.client = client'''
-    
-    def __init__(self, storage_client = storage.Client()):
+
+    def __init__(self, storage_client=storage.Client()):
         self.storage_client = storage_client
-        
-        
+
     #changed to check id instead of name
     def get_wiki_page(self, id):
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs(
-            "nrjcontent", prefix="pages/", delimiter="/")
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
         for blob in blobs:
             page_data = json.loads(blob.download_as_bytes(client=None))
             if id == int(page_data["id"]):
                 return page_data
+
     """Function for retrieving a page with specific ID.
 
     Searches the content/pages bucket for a blob matching a specific id parameter. Returns
@@ -43,13 +43,15 @@ class Backend:
 
     def get_all_pages(self):
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs(
-            "nrjcontent", prefix="pages/", delimiter="/")
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
         all_pages_data = []
         for blob in blobs:
             page_data = json.loads(blob.download_as_bytes(client=None))
             all_pages_data.append(page_data)
         return all_pages_data
+
     """Function for retrieving all page objects.
 
     Adds all JSON objects within the the content/pages bucket into a list to return.
@@ -69,6 +71,7 @@ class Backend:
         blob.upload_from_filename(blob_name)
 
         return
+
     """ Uploads allowed files into bucket
         After checking that its a valid file from pages.py, we take in the object we would
         like to upload and specfiy the route in which our file will be stored
@@ -82,8 +85,7 @@ class Backend:
 
     """
 
-
-        #storage_client = self.client
+    #storage_client = self.client
 
     def sign_up(self, new_user, password):
         """If username and password combination do not exist,
@@ -98,14 +100,15 @@ class Backend:
         #storage_client = storage.Client()
         bucket = self.storage_client.bucket("userpass")
         blob = bucket.blob(new_user.username)
-        info = {"password" : password}
+        info = {"password": password}
         if blob.exists():
-            return False                                 
+            return False
         with blob.open("w") as f:
             f.write(json.dumps(info))
-        return storage.Blob(bucket=bucket, name=new_user.username).exists(self.storage_client)
+        return storage.Blob(bucket=bucket,
+                            name=new_user.username).exists(self.storage_client)
 
-    def sign_in(self, existing_user,password):
+    def sign_in(self, existing_user, password):
         """If blob with username do not exist,
         return False. Return true only if blob
         with usename exists and the blob data 
@@ -137,7 +140,7 @@ class Backend:
 
         imageObj = blob.open('rb')
         imageBytes = imageObj.read()
- 
+
         return base64.b64encode(imageBytes)
 
     """ Retrieves images from Bucket
