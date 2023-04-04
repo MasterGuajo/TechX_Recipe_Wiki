@@ -11,14 +11,14 @@ import base64
 import io
 
 # Extension that the user is allowed to upload
-#ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'} 
+#ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'}
 ALLOWED_EXTENSIONS = {'json'}
-
 """Route Manager for Program
 
 Uses route decorators to designate app's routes. Returns jinja html templates
 to load pages.
 """
+
 
 def make_endpoints(app):
     login_manager = LoginManager()
@@ -33,8 +33,9 @@ def make_endpoints(app):
     @app.route("/home")
     def home():
         if current_user.is_authenticated:
-            return render_template("main.html", name = current_user.username)
+            return render_template("main.html", name=current_user.username)
         return render_template("main.html")
+
     """Endpoint for homepage.
 
     Loads home page with jinja template.
@@ -43,13 +44,17 @@ def make_endpoints(app):
         A jinja render_template call with the corresponding template - main.html. Changes
         param if user is logged in.
     """
-    
+
     @app.route("/pages")
     def pages():
         if current_user.is_authenticated:
-            return render_template("pages.html", pages=Backend.get_all_pages(None), name = current_user.username)
+            return render_template("pages.html",
+                                   pages=Backend.get_all_pages(None),
+                                   name=current_user.username)
         else:
-            return render_template("pages.html", pages=Backend.get_all_pages(None))
+            return render_template("pages.html",
+                                   pages=Backend.get_all_pages(None))
+
     """Endpoint for wiki pages.
 
     Loads wiki page overview with jinja template. Calls Backend function to retrieve the
@@ -63,9 +68,15 @@ def make_endpoints(app):
     @app.route("/pages/<int:page_id>")
     def show_page(page_id):
         if current_user.is_authenticated:
-            return render_template("page.html", page_data=Backend.get_wiki_page(None, page_id), name = current_user.username)
+            return render_template("page.html",
+                                   page_data=Backend.get_wiki_page(
+                                       None, page_id),
+                                   name=current_user.username)
         else:
-            return render_template("page.html", page_data=Backend.get_wiki_page(None, page_id))
+            return render_template("page.html",
+                                   page_data=Backend.get_wiki_page(
+                                       None, page_id))
+
     """Endpoint for specific wiki page.
 
     Parametrized endpoint for specific wiki page, loads page matching an ID with the jinja 
@@ -75,16 +86,18 @@ def make_endpoints(app):
         A jinja render_template call with the corresponding template - page.html. Loads
         data with Backend function call. Changes param if user is logged in.
     """
+
     @app.route("/about", methods=['GET'])
     def about():
-        
-        author_images = ['plswork.jpg','cat.jpg','hamster.png']
 
-        for index,file_name in enumerate(author_images):
-            image = Backend.get_image(None,file_name)
+        author_images = ['plswork.jpg', 'cat.jpg', 'hamster.png']
+
+        for index, file_name in enumerate(author_images):
+            image = Backend.get_image(None, file_name)
             author_images[index] = image.decode('utf-8')
 
-        return render_template("about.html", show = author_images)
+        return render_template("about.html", show=author_images)
+
     """Endpoint for about page.
 
     Loads wiki page with corresponding jinja template - about.html. Calls backend
@@ -99,6 +112,7 @@ def make_endpoints(app):
     def allowed_file(filename):
         return '.' in filename and \
             filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+
     """ Checks that a given file has an allowed format
 
     Checks if the termination of a file is in the specified list of allowed formats
@@ -120,7 +134,9 @@ def make_endpoints(app):
             if 'file' not in request.files:
                 # flash('No file part')
                 message = "No file part"
-                return render_template("upload.html",message = message, name = current_user.username)
+                return render_template("upload.html",
+                                       message=message,
+                                       name=current_user.username)
                 # return redirect(request.url)
 
             file = request.files['file']
@@ -128,14 +144,18 @@ def make_endpoints(app):
             if file.filename == '':
 
                 message = "No selected file"
-                return render_template("upload.html",message = message, name = current_user.username)
+                return render_template("upload.html",
+                                       message=message,
+                                       name=current_user.username)
 
                 # flash('No selected file')
                 # return redirect(request.url)
-            
-            if not(allowed_file(file.filename)):
+
+            if not (allowed_file(file.filename)):
                 message = "Not a valid file format"
-                return render_template("upload.html",message = message, name = current_user.username)
+                return render_template("upload.html",
+                                       message=message,
+                                       name=current_user.username)
 
             # If valid, we pass it to the backend in order to upload to our bucket
             if file and allowed_file(file.filename):
@@ -145,11 +165,13 @@ def make_endpoints(app):
 
                 Backend.upload(None, 'nrjcontent', file.filename)
                 message = "Succesfully uploaded"
-               
-                return render_template("upload.html",message = message, name = current_user.username)
 
-        return render_template("upload.html", name = current_user.username)
-    
+                return render_template("upload.html",
+                                       message=message,
+                                       name=current_user.username)
+
+        return render_template("upload.html", name=current_user.username)
+
     """ Uploads file to specified path in bucket
 
     Using a POST method, we obtain from the user a file that will be uploaded in the bucket. Before uploading,
@@ -195,7 +217,6 @@ def make_endpoints(app):
             return redirect('/home')
         else:
             return "Sign Up Failed."
-        
 
     @app.route("/login")
     def login():
@@ -223,7 +244,7 @@ def make_endpoints(app):
         if Backend.sign_in(None, flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
-        else: 
+        else:
             return "Login Failed"
 
     @app.route("/logout")
@@ -231,6 +252,6 @@ def make_endpoints(app):
     def logout():
         """
         Renders login form template.
-        """        
+        """
         logout_user()
         return redirect('/home')
