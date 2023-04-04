@@ -1,5 +1,4 @@
 image: python:3
-
 lint:
  stage: test
  script:
@@ -7,15 +6,6 @@ lint:
   - yapf --style google --recursive --diff .
  only:
   - merge_requests
-
-# lint:
-#  stage: test
-#  script:
-#  - pip install yapf==0.32.0
-#  - yapf --recursive . --diff --style google
-#  only:
-#  - merge_requests
-
 unittest:
  stage: test
  script:
@@ -23,19 +13,7 @@ unittest:
   - pytest .
  only:
   - merge_requests
-
-# unittest:
-#  stage: test
-#  needs: 
-#  - pipeline: test
-#    job: lint
-#  script:
-#  - pip install -r requirements.txt
-#  - pytest .
-#  only:
-#  - merge_requests
-
- prod:
+prod:
  image: google/cloud-sdk:alpine
  stage: deploy
  environment: Production
@@ -45,17 +23,3 @@ unittest:
  - echo $SERVICE_ACCOUNT > /tmp/$CI_PIPELINE_ID.json
  - gcloud auth activate-service-account --key-file /tmp/$CI_PIPELINE_ID.json
  - gcloud --quiet --project $PROJECT_ID app deploy
-
-# prod:
-#  image: google/cloud-sdk:alpine
-#  stage: deploy
-#  needs: 
-#  - pipeline: test
-#    job: unittest
-#  environment: Production
-#  only:
-#  - main
-#  script:
-#  - echo $SERVICE_ACCOUNT > /tmp/$CI_PIPELINE_ID.json
-#  - gcloud auth activate-service-account --key-file /tmp/$CI_PIPELINE_ID.json
-#  - gcloud --quiet --project $PROJECT_ID app deploy
