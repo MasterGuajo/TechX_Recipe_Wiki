@@ -1,0 +1,61 @@
+{% extends "navbar.html" %}
+
+{% block content %}
+
+
+    <div class='search_engine'>
+        
+        <h2>Advanced Search</h2>
+
+        <h2>{{ message }}</h2>
+
+        <form method='POST'>
+
+            <h3>Search by Game Title</h3>
+
+            {% for game in game_categories%}
+    
+                <input type="checkbox" name="game_chosen" value="{{ game }}">
+                <label for="{{ game }}">{{ game }}</label><br>
+    
+            {% endfor %}
+    
+            <h3>Search by time range</h3>
+
+            {% for time in time_ranges%}
+    
+                <input type="radio" name="time_chosen" value="{{ time }}">
+                <label for="{{ time }}">{{ time }}</label><br>
+    
+            {% endfor %}
+
+            <input type='submit' value='Upload'>
+        </form>
+           
+    </div>
+
+    <div class='results'>
+
+        <h2>Results</h2>
+
+        <ul>
+            {% for item in recipes: %}
+            <a href=/pages/{{item["id"]}}>
+                <div><img class="item_icon" src={{item["img"]}} alt="">{{ item["name"] }} - {{ item["game"] }}</div>
+            </a><br>
+            {% endfor %}
+        </ul>
+   
+    </div>
+
+    <style>
+        .search_engine {
+            float: left;
+            
+        }
+
+        .results {
+            float: right;
+        }
+    </style>
+{% endblock %}

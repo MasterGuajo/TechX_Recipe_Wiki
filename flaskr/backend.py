@@ -3,6 +3,7 @@ from flask import Flask, flash, request, redirect, url_for, send_file
 import base64
 import io
 import json
+import random
 """Backend Class for Program, Retrieves Data from Cloud Storage for Use.
 
 Typical usage example:
@@ -154,3 +155,32 @@ class Backend:
     Returns:
         The Bytes of the image with base64 encoding.
     """
+
+    def get_game_categories(self):
+
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+        
+        game_categories = set()
+
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client = None))
+            if page_data['game'] not in game_categories:
+                game_categories.add(page_data['game'])
+
+        return game_categories
+    
+    def get_time_ranges(self):
+        
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+        
+        time_ranges = set()
+
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client = None))
+            if page_data['time'] not in time_ranges:
+                time_ranges.add(page_data['time'])
+
+        return time_ranges
+

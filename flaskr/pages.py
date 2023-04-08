@@ -10,6 +10,8 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 import base64
 import io
 
+import json
+
 # Extension that the user is allowed to upload
 #ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'}
 ALLOWED_EXTENSIONS = {'json'}
@@ -255,3 +257,22 @@ def make_endpoints(app):
         """
         logout_user()
         return redirect('/home')
+
+    @app.route("/search", methods=['POST','GET'])
+    @app.route("/search")
+    def search():
+
+        game_categories = Backend.get_game_categories(None)
+        time_ranges = Backend.get_time_ranges(None)
+
+        if request.method == "POST":
+            
+            # Shows you current values
+            selected_games = request.form.getlist('game_chosen')
+            selected_times = request.form.get('time_chosen')
+
+            # Return recipes variable
+            return render_template("search.html",game_categories = game_categories, time_ranges = time_ranges, 
+                                    selected_games = selected_games, selected_times = selected_times)
+            
+        return render_template("search.html",game_categories = game_categories, time_ranges = time_ranges)
