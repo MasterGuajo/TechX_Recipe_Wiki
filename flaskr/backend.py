@@ -3,6 +3,7 @@ from flask import Flask, flash, request, redirect, url_for, send_file
 import base64
 import io
 import json
+import random
 """Backend Class for Program, Retrieves Data from Cloud Storage for Use.
 
 Typical usage example:
@@ -154,3 +155,40 @@ class Backend:
     Returns:
         The Bytes of the image with base64 encoding.
     """
+
+    def belongs_to_game(self, game_titles):
+        result_pages = set()
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client=None))
+            for game in game_titles:
+                if game.lower() == page_data["game"].lower():
+                    result_pages.add(page_data)
+        return result_pages
+
+    def is_quick_enough(self, time_range):
+        result_pages = set()
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client=None))
+            if int(time_range) >= int(page_data["time"]):
+                result_pages.add(page_data)
+        return result_pages
+
+    def surprise_me(self):
+        storage_client = storage.Client()
+        blobs = list(storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/"))
+        index = random.randint(len(blobs))
+        blob = blobs[index]
+        page_data = json.loads(blob.download_as_bytes(client=None))
+        return page_data
+
+

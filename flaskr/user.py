@@ -10,7 +10,7 @@ class User(UserMixin):
     Attributes:
         username: String indicating user's id to authenticate.
     """
-
+    
     def __init__(self, username):
         """Initializes the User based on their username.
 
