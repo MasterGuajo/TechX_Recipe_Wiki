@@ -87,11 +87,32 @@ class Backend:
 
     #storage_client = self.client
 
+    # def sign_up(self, new_user, password):
+    #     """If username and password combination do not exist,
+    #     create a blob with said information and send it to the
+    #     userpass bucket to keep. Return if blobs exists after writing, 
+    #     or false if it already existed.                       
+
+    #     Args:
+    #       new_user: User object that holds username.
+    #       password: String that holds hashed password with prefix.
+    #     """
+    #     #storage_client = storage.Client()
+    #     bucket = self.storage_client.bucket("userpass")
+    #     blob = bucket.blob(new_user.username)
+    #     info = {"password": password}
+    #     if blob.exists():
+    #         return False
+    #     with blob.open("w") as f:
+    #         f.write(json.dumps(info))
+    #     return storage.Blob(bucket=bucket,
+    #                         name=new_user.username).exists(self.storage_client)
+    
     def sign_up(self, new_user, password):
         """If username and password combination do not exist,
         create a blob with said information and send it to the
         userpass bucket to keep. Return if blobs exists after writing, 
-        or false if it already existed.                       
+        or false if it already existed.
 
         Args:
           new_user: User object that holds username.
@@ -100,7 +121,10 @@ class Backend:
         #storage_client = storage.Client()
         bucket = self.storage_client.bucket("userpass")
         blob = bucket.blob(new_user.username)
-        info = {"password": password}
+        info = dict()
+        info["password"] = password
+        info["preferences"] = []
+        #info["favorites"] = []
         if blob.exists():
             return False
         with blob.open("w") as f:
@@ -154,3 +178,67 @@ class Backend:
     Returns:
         The Bytes of the image with base64 encoding.
     """
+
+    def get_recipe_categories(self):
+
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+
+        recipe_categories = set()
+
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client = None))
+            if page_data['cate'] not in recipe_categories:
+                recipe_categories.add(page_data['cate'])
+        
+        return recipe_categories
+    
+    def get_selected_categories(self,selected_categories):
+
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+
+        resulting_pages = []
+
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client = None))
+            if page_data['cate'] in selected_categories:
+                resulting_pages.append(page_data)
+
+        return resulting_pages
+    
+    def get_preferences(self,user):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("userpass")
+        blob = bucket.blob(user.username)
+        if blob.exists():
+            user_data = json.loads(blob.download_as_bytes(client=None))
+            return user_data["preferences"]
+        else:
+            return []
+            
+    def store_preferences(self,user, new_preferences):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("userpass")
+        blob = bucket.blob(user.username)
+        if blob.exists():
+            user_data = json.loads(blob.download_as_bytes(client=None))
+            for pref in new_preferences:
+                user_data["preferences"].append(pref)
+            with blob.open("w") as f:
+                f.write(json.dumps(user_data))
+            return True
+        else:
+            return False
+    
+    def reset_preferences(self, user):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("userpass")
+        blob = bucket.blob(user.username)
+        if blob.exists():
+            user_data = json.loads(blob.download_as_bytes(client=None))
+            user_data["preferences"] = []
+            with blob.open("w") as f:
+                f.write(json.dumps(user_data))
+            return
+    
