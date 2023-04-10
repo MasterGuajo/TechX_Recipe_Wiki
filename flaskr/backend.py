@@ -4,6 +4,7 @@ import base64
 import io
 import json
 import random
+import numpy as np
 """Backend Class for Program, Retrieves Data from Cloud Storage for Use.
 
 Typical usage example:
@@ -101,7 +102,10 @@ class Backend:
         #storage_client = storage.Client()
         bucket = self.storage_client.bucket("userpass")
         blob = bucket.blob(new_user.username)
-        info = {"password": password}
+        info = dict()
+        info["password"] = password
+        info["preferences"] = []
+        #info["favorites"] = []
         if blob.exists():
             return False
         with blob.open("w") as f:
@@ -190,5 +194,39 @@ class Backend:
         blob = blobs[index]
         page_data = json.loads(blob.download_as_bytes(client=None))
         return page_data
+
+    def get_preferences(self,user):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("userpass")
+        blob = bucket.blob(user.username)
+        if blob.exists():
+            user_data = json.loads(blob.download_as_bytes(client=None))
+            return user_data["preferences"]
+        else:
+            return []
+    def store_preferences(self,user, new_preferences):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("userpass")
+        blob = bucket.blob(user.username)
+        if blob.exists():
+            user_data = json.loads(blob.download_as_bytes(client=None))
+            for pref in new_preferences:
+                user_data["preferences"].append(pref)
+            with blob.open("w") as f:
+                f.write(json.dumps(user_data))
+            return True
+        else:
+            return False
+
+    def reset_preferences(self, user):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("userpass")
+        blob = bucket.blob(user.username)
+        if blob.exists():
+            user_data = json.loads(blob.download_as_bytes(client=None))
+            user_data["preferences"] = []
+            with blob.open("w") as f:
+                f.write(json.dumps(user_data))
+                    
 
 
