@@ -4,7 +4,6 @@ import base64
 import io
 import json
 import random
-import numpy as np
 """Backend Class for Program, Retrieves Data from Cloud Storage for Use.
 
 Typical usage example:
@@ -196,6 +195,14 @@ class Backend:
         return page_data
 
     def get_preferences(self,user):
+        """If blob with username does not exist,
+        return an empty list. Otherwise, return 
+        the preference list stored in the user
+        file.        
+
+        Args:
+          user: User object that holds username.
+        """
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(user.username)
@@ -203,15 +210,33 @@ class Backend:
             user_data = json.loads(blob.download_as_bytes(client=None))
             return user_data["preferences"]
         else:
-            return []
+            return None
     def store_preferences(self,user, new_preferences):
+        """If blob with username does not exist,
+        return false. Otherwise, iterate through
+        new_preferences and add the ones that were 
+        not previously saved in the user file. Finally
+        return true. This function returns a boolean
+        value in case we want to add an error message 
+        in our page if the user preferences were not saved
+        adequately.       
+
+        Args:
+          user: User object that holds username.
+          new_preferences: list of preferences that the user marked.
+        """
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(user.username)
         if blob.exists():
             user_data = json.loads(blob.download_as_bytes(client=None))
+            if not user_data.get("preferences"):
+                user_data["preferences"] =[]
+
             for pref in new_preferences:
-                user_data["preferences"].append(pref)
+                if pref not in user_data["preferences"]:
+                    user_data["preferences"].append(pref)
+
             with blob.open("w") as f:
                 f.write(json.dumps(user_data))
             return True
@@ -219,6 +244,14 @@ class Backend:
             return False
 
     def reset_preferences(self, user):
+        """If blob with username does not exist,
+        do nothing. Otherwise, set the current
+        user preferences into an empty list and 
+        save it in the json file.        
+
+        Args:
+          user: User object that holds username.
+        """
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(user.username)
