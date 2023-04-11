@@ -165,3 +165,96 @@ def test_get_wiki_page_none():
 id it is trying to access does not exist.
 Run this test by running `pytest -v` in the /project directory.
 """
+
+def test_get_recipe_category_one_category():
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.bucket.return_value = test_bucket
+    test_bucket.blob.return_value = test_blob
+
+    test_blob.download_as_bytes.return_value = {"cate":"pie"}
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+        # with patch('json.loads', return_value = {"cate": "pie"}):
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"cate": "pie"}
+
+            result = backend.get_recipe_categories()
+            print(result)
+
+    assert len(result) == 1
+
+def test_get_recipe_category_zero_categories():
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.bucket.return_value = test_bucket
+    test_bucket.blob.return_value = test_blob
+
+    test_blob.download_as_bytes.return_value = {"name":"Minecraft"}
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        # with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+        backend = Backend(test_storage_client)
+
+        # mock_json.return_value = {"name": "Minecraft"}
+
+        result = backend.get_recipe_categories()
+        print(result)
+
+    assert len(result) == 0
+
+def test_get_selected_categories_one_category():
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.bucket.return_value = test_bucket
+    test_bucket.blob.return_value = test_blob
+
+    test_blob.download_as_bytes.return_value = {"cate":"pie"}
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"cate": "pie"}
+            categories = ['pie']
+            result = backend.get_selected_categories(categories)
+            print(result)
+
+    assert len(result) == 1
+
+def test_get_selected_categories_zero_categories():
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.bucket.return_value = test_bucket
+    test_bucket.blob.return_value = test_blob
+
+    test_blob.download_as_bytes.return_value = {"name":"Minecraft"}
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"name":"Minecraft"}
+            categories = ['pie']
+            result = backend.get_selected_categories(categories)
+            print(result)
+
+    assert len(result) == 0

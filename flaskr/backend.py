@@ -185,9 +185,11 @@ class Backend:
         blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
 
         recipe_categories = set()
+        # recipe_categories = json.loads(blobs.download_as_bytes(client = None))
 
         for blob in blobs:
             page_data = json.loads(blob.download_as_bytes(client = None))
+
             if page_data['cate'] not in recipe_categories:
                 recipe_categories.add(page_data['cate'])
         
