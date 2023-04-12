@@ -172,9 +172,7 @@ def test_get_recipe_category_one_category():
     test_storage_client = MagicMock()
 
     test_storage_client.list_blobs.return_value = [test_blob]
-
     test_storage_client.bucket.return_value = test_bucket
-    # test_bucket.blob.return_value = test_blob
 
     # Test it later
     test_blob.download_as_bytes.return_value = {"cate":"pie"}
@@ -191,8 +189,14 @@ def test_get_recipe_category_one_category():
             print(result)
 
     assert len(result) == 1
+""" This test checks if there is one category in our json fields 
 
-def test_get_recipe_category_no_category():
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_get_recipe_category_no_category_field():
     test_blob = MagicMock()
     test_bucket = MagicMock()
     test_storage_client = MagicMock()
@@ -216,6 +220,12 @@ def test_get_recipe_category_no_category():
             print(result)
 
     assert len(result) == 0
+""" This test checks if there is no category field available 
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
 
 def test_get_recipe_category_no_category_entry():
     test_blob = MagicMock()
@@ -227,7 +237,7 @@ def test_get_recipe_category_no_category_entry():
     test_storage_client.bucket.return_value = test_bucket
     # test_bucket.blob.return_value = test_blob
 
-    test_blob.download_as_bytes.return_value = {"name":"Minecraft"}
+    test_blob.download_as_bytes.return_value = {"cate":""}
 
     with patch('google.cloud.storage.Client', return_value=test_storage_client):
 
@@ -235,12 +245,17 @@ def test_get_recipe_category_no_category_entry():
 
             backend = Backend(test_storage_client)
 
-            mock_json.return_value = {"name": "Minecraft"}
+            mock_json.return_value = {"cate": ""}
 
             result = backend.get_recipe_categories()
             print(result)
 
     assert len(result) == 0
+""" This test checks if there the category field is empty
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
 
 def test_get_selected_categories_one_category():
     test_blob = MagicMock()
@@ -250,7 +265,6 @@ def test_get_selected_categories_one_category():
     test_storage_client.list_blobs.return_value = [test_blob]
 
     test_storage_client.bucket.return_value = test_bucket
-    # test_bucket.blob.return_value = test_blob
 
     test_blob.download_as_bytes.return_value = {"cate":"pie"}
 
@@ -266,6 +280,11 @@ def test_get_selected_categories_one_category():
             print(result)
 
     assert len(result) == 1
+""" This test checks if there is one category in our json fields that matched our mocked user input
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
 
 def test_get_selected_categories_no_category_field():
     test_blob = MagicMock()
@@ -275,7 +294,6 @@ def test_get_selected_categories_no_category_field():
     test_storage_client.list_blobs.return_value = [test_blob]
 
     test_storage_client.bucket.return_value = test_bucket
-    # test_bucket.blob.return_value = test_blob
 
     test_blob.download_as_bytes.return_value = {"name":"Minecraft"}
 
@@ -291,6 +309,11 @@ def test_get_selected_categories_no_category_field():
             print(result)
 
     assert len(result) == 0
+""" This test checks if there is no category field in our mock JSON
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
 
 def test_get_selected_categories_no_category_entry():
     test_blob = MagicMock()
@@ -302,7 +325,7 @@ def test_get_selected_categories_no_category_entry():
     test_storage_client.bucket.return_value = test_bucket
     # test_bucket.blob.return_value = test_blob
 
-    test_blob.download_as_bytes.return_value = {"name":"Minecraft"}
+    test_blob.download_as_bytes.return_value = {"cate":""}
 
     with patch('google.cloud.storage.Client', return_value=test_storage_client):
 
@@ -310,9 +333,14 @@ def test_get_selected_categories_no_category_entry():
 
             backend = Backend(test_storage_client)
 
-            mock_json.return_value = {"name":"Minecraft"}
+            mock_json.return_value = {"cate":""}
             categories = ['pie']
             result = backend.get_selected_categories(categories)
             print(result)
 
     assert len(result) == 0
+""" This test checks if there is no input in our category field
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
