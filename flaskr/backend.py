@@ -185,15 +185,28 @@ class Backend:
         blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
 
         recipe_categories = set()
-        # recipe_categories = json.loads(blobs.download_as_bytes(client = None))
 
         for blob in blobs:
             page_data = json.loads(blob.download_as_bytes(client = None))
+            
+            if 'cate' not in page_data:
+                continue
 
-            if page_data['cate'] not in recipe_categories:
-                recipe_categories.add(page_data['cate'])
+            elif page_data['cate'] not in recipe_categories:
+                if page_data['cate'] != "":
+                    recipe_categories.add(page_data['cate'])
         
         return recipe_categories
+
+    """ Obtains categories available in recipes
+    Parses through JSON files and adds newly seen categories to a set so that they can be
+    displayed in HTML
+
+    Args:
+        Self
+    Returns:
+        A set of categories found
+    """
     
     def get_selected_categories(self,selected_categories):
 
@@ -204,11 +217,26 @@ class Backend:
 
         for blob in blobs:
             page_data = json.loads(blob.download_as_bytes(client = None))
-            if page_data['cate'] in selected_categories:
-                resulting_pages.append(page_data)
+            
+            if 'cate' not in page_data:
+                continue
+
+            elif page_data['cate'] in selected_categories:
+
+                if page_data['cate'] != "":
+                    resulting_pages.append(page_data)
 
         return resulting_pages
-    
+    """ Gets recipes that fall into selected categories
+    Parses through the JSON recipes and compares their categories to see 
+    if they will be returned
+
+    Args:
+        selected_categories: An array of user preferences
+    Returns:
+        resulting_pages: An array of recipes that fall with user preferences
+    """
+
     def get_preferences(self,user):
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")

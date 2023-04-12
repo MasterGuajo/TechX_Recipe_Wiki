@@ -277,3 +277,16 @@ def make_endpoints(app):
         recipes = Backend.get_selected_categories(None,user_preferences)
 
         return render_template("profile_page.html", recipe_categories = recipe_categories, recipes = recipes, name = current_user.username)
+    """ Profile page that displays user preferences
+    Using a POST method, a user can set and reset new preferences. Depending on the request.form, 
+    we know what actions our backend should take
+
+    Args:
+        POST method
+
+    Uses:
+        reset_prefences, store_preferences, get_preferences and get_selected_categories
+
+    Returns:
+        HTML render with user selected recipe categories
+    """
