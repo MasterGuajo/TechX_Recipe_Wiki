@@ -165,3 +165,159 @@ def test_get_wiki_page_none():
 id it is trying to access does not exist.
 Run this test by running `pytest -v` in the /project directory.
 """
+
+def test_get_game_categories_one_category():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value = test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"game": "Minecraft"}
+
+            result = backend.get_game_categories()
+        
+    assert len(result) == 1
+""" This test checks if there is one category in our json fields 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+def test_get_game_categories_no_category_field():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value = test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"cate": "pie"}
+
+            result = backend.get_game_categories()
+        
+    assert len(result) == 0
+""" This test checks if there is no game field in our JSON 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+def test_get_game_categories_no_category_entry():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value = test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"game": ""}
+
+            result = backend.get_game_categories()
+        
+    assert len(result) == 0
+""" This test checks if our game field is empty 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+def test_get_time_ranges_one_time_range():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value = test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"time": "45"}
+
+            result = backend.get_time_ranges()
+        
+    assert len(result) == 1
+""" This test checks if there is one time range in our json fields 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+def test_get_time_range_no_time_field():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value = test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"game": "Minecraft"}
+
+            result = backend.get_time_ranges()
+        
+    assert len(result) == 0
+""" This test checks if there is no time field in our JSON 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+def test_get_time_ranges_no_time_entry():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value = test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"time": ""}
+
+            result = backend.get_time_ranges()
+        
+    assert len(result) == 0
+""" This test checks if our time field is empty 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""

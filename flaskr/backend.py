@@ -165,10 +165,25 @@ class Backend:
 
         for blob in blobs:
             page_data = json.loads(blob.download_as_bytes(client = None))
-            if page_data['game'] not in game_categories:
-                game_categories.add(page_data['game'])
+
+            if 'game' not in page_data:
+                continue
+
+            elif page_data['game'] not in game_categories:
+                if page_data['game'] != "":
+                    game_categories.add(page_data['game'])
 
         return game_categories
+    """ Obtains all game titles in current recipes
+    Parses through all recipe JSONs in our bucket and creates a set of 
+    all game titles available
+
+    Args:
+        None
+
+    Returns:
+        A set of game titles
+    """
     
     def get_time_ranges(self):
         
@@ -179,8 +194,23 @@ class Backend:
 
         for blob in blobs:
             page_data = json.loads(blob.download_as_bytes(client = None))
-            if page_data['time'] not in time_ranges:
-                time_ranges.add(page_data['time'])
+
+            if 'time' not in page_data:
+                continue
+
+            elif page_data['time'] not in time_ranges:
+                if page_data['time'] != "":
+                    time_ranges.add(page_data['time'])
 
         return time_ranges
+    """ Obrains all time ranges in current recipes
+    Parses through all recipe JSONs in bucket and creates a set of all 
+    time ranges available
+
+    Args:
+        None
+
+    Returns:
+        A set of time ranges    
+    """
 
