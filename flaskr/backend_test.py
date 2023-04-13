@@ -172,10 +172,8 @@ def test_get_recipe_category_one_category():
     test_storage_client = MagicMock()
 
     test_storage_client.list_blobs.return_value = [test_blob]
-    test_storage_client.bucket.return_value = test_bucket
 
-    # Test it later
-    test_blob.download_as_bytes.return_value = {"cate":"pie"}
+    test_storage_client.bucket.return_value = test_bucket
 
     with patch('google.cloud.storage.Client', return_value=test_storage_client):
 
@@ -204,9 +202,6 @@ def test_get_recipe_category_no_category_field():
     test_storage_client.list_blobs.return_value = [test_blob]
 
     test_storage_client.bucket.return_value = test_bucket
-    # test_bucket.blob.return_value = test_blob
-
-    test_blob.download_as_bytes.return_value = {"name":"Minecraft"}
 
     with patch('google.cloud.storage.Client', return_value=test_storage_client):
 
@@ -235,9 +230,6 @@ def test_get_recipe_category_no_category_entry():
     test_storage_client.list_blobs.return_value = [test_blob]
 
     test_storage_client.bucket.return_value = test_bucket
-    # test_bucket.blob.return_value = test_blob
-
-    test_blob.download_as_bytes.return_value = {"cate":""}
 
     with patch('google.cloud.storage.Client', return_value=test_storage_client):
 
@@ -266,8 +258,6 @@ def test_get_selected_categories_one_category():
 
     test_storage_client.bucket.return_value = test_bucket
 
-    test_blob.download_as_bytes.return_value = {"cate":"pie"}
-
     with patch('google.cloud.storage.Client', return_value=test_storage_client):
 
         with patch('json.loads', new_callable=MagicMock) as mock_json:
@@ -295,8 +285,6 @@ def test_get_selected_categories_no_category_field():
 
     test_storage_client.bucket.return_value = test_bucket
 
-    test_blob.download_as_bytes.return_value = {"name":"Minecraft"}
-
     with patch('google.cloud.storage.Client', return_value=test_storage_client):
 
         with patch('json.loads', new_callable=MagicMock) as mock_json:
@@ -323,9 +311,6 @@ def test_get_selected_categories_no_category_entry():
     test_storage_client.list_blobs.return_value = [test_blob]
 
     test_storage_client.bucket.return_value = test_bucket
-    # test_bucket.blob.return_value = test_blob
-
-    test_blob.download_as_bytes.return_value = {"cate":""}
 
     with patch('google.cloud.storage.Client', return_value=test_storage_client):
 

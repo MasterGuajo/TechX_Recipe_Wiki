@@ -84,29 +84,6 @@ class Backend:
         Doesn't return anything as we are only communicating it with our backend
 
     """
-
-    #storage_client = self.client
-
-    # def sign_up(self, new_user, password):
-    #     """If username and password combination do not exist,
-    #     create a blob with said information and send it to the
-    #     userpass bucket to keep. Return if blobs exists after writing, 
-    #     or false if it already existed.                       
-
-    #     Args:
-    #       new_user: User object that holds username.
-    #       password: String that holds hashed password with prefix.
-    #     """
-    #     #storage_client = storage.Client()
-    #     bucket = self.storage_client.bucket("userpass")
-    #     blob = bucket.blob(new_user.username)
-    #     info = {"password": password}
-    #     if blob.exists():
-    #         return False
-    #     with blob.open("w") as f:
-    #         f.write(json.dumps(info))
-    #     return storage.Blob(bucket=bucket,
-    #                         name=new_user.username).exists(self.storage_client)
     
     def sign_up(self, new_user, password):
         """If username and password combination do not exist,
