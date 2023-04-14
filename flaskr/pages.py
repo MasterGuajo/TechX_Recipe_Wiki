@@ -256,7 +256,7 @@ def make_endpoints(app):
         logout_user()
         return redirect('/home')
 
-    @app.route("/admin", methods=["GET","POST"])
+    @app.route("/admin", methods=["GET", "POST"])
     def admin():
         """Display original and suggested json files.
         Selecting approve or reject buttons will return the
@@ -266,7 +266,8 @@ def make_endpoints(app):
         Args:
           button_clicked: approve or reject
         """
-        lst1 = Backend.get_all_pages(None) #SHOULD PULL Original pages and edited pages instead
+        lst1 = Backend.get_all_pages(
+            None)  #SHOULD PULL Original pages and edited pages instead
 
         if request.method == "POST":
             button_clicked = request.form.get('button_clicked')
@@ -275,14 +276,21 @@ def make_endpoints(app):
                 index = int(button_clicked.split('_')[1])
                 # Use backend functions to complete task
 
-                return render_template("admin.html", edited_pages = lst1, og_pages = lst1, len = 0)
+                return render_template("admin.html",
+                                       edited_pages=lst1,
+                                       og_pages=lst1,
+                                       len=0)
 
             elif button_clicked.startswith('reject_'):
                 index = int(button_clicked.split('_')[1])
                 # Use backend functions to complete task
 
-                return render_template("admin.html", edited_pages = lst1, og_pages = lst1, len = 0)
-        else:    
-            return render_template("admin.html", edited_pages = lst1, og_pages = lst1, len = len(lst1))
-    
-   
+                return render_template("admin.html",
+                                       edited_pages=lst1,
+                                       og_pages=lst1,
+                                       len=0)
+        else:
+            return render_template("admin.html",
+                                   edited_pages=lst1,
+                                   og_pages=lst1,
+                                   len=len(lst1))

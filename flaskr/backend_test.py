@@ -83,6 +83,7 @@ def test_wrong_password_signin():
     assert test == False
 '''
 
+
 def test_upload():
 
     test_blob = MagicMock()
@@ -117,8 +118,6 @@ Uses:
 Returns:
     Our return statement is going to be whether or not our assertion passed or fail.
 """
-
-
 '''def test_get_all_pages_min():
     data = Backend.get_all_pages(None)
     assert len(data) > 0
