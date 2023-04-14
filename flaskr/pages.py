@@ -256,7 +256,7 @@ def make_endpoints(app):
         logout_user()
         return redirect('/home')
 
-    @app.route("/profile_page", methods=['POST','GET'])
+    @app.route("/profile_page", methods=['POST', 'GET'])
     @login_required
     def profile_page():
         # Gets all recipe categories available for display
@@ -265,18 +265,23 @@ def make_endpoints(app):
         if request.method == "POST":
 
             if "reset" in request.form:
-                Backend.reset_preferences(None,current_user)
+                Backend.reset_preferences(None, current_user)
             else:
                 # Store preferences
-                Backend.store_preferences(None,current_user,request.form.getlist('category_chosen'))
+                Backend.store_preferences(
+                    None, current_user, request.form.getlist('category_chosen'))
 
-         # Gets current user preferences
-        user_preferences = Backend.get_preferences(None,current_user)
+        # Gets current user preferences
+        user_preferences = Backend.get_preferences(None, current_user)
 
         # Filter recipes
-        recipes = Backend.get_selected_categories(None,user_preferences)
+        recipes = Backend.get_selected_categories(None, user_preferences)
 
-        return render_template("profile_page.html", recipe_categories = recipe_categories, recipes = recipes, name = current_user.username)
+        return render_template("profile_page.html",
+                               recipe_categories=recipe_categories,
+                               recipes=recipes,
+                               name=current_user.username)
+
     """ Profile page that displays user preferences
     Using a POST method, a user can set and reset new preferences. Depending on the request.form, 
     we know what actions our backend should take

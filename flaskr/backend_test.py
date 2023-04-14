@@ -45,10 +45,11 @@ def test_wrong_signup():
         user = User('ExistingUser')
     assert not backend.sign_up(user, 'password')
 
+
 # TO - DO
 # def test_correct_signin():
-#     """Tests signin function when user attempts to login 
-#         an account that already exists and the password is correct. 
+#     """Tests signin function when user attempts to login
+#         an account that already exists and the password is correct.
 #     """
 #     user = User('new')
 #     pas = 'prefix' + 'password'
@@ -71,10 +72,11 @@ def test_wrong_signin():
         user = User('NonExistingUser')
     assert not backend.sign_up(user, 'password')
 
+
 # TO - DO
 # def test_wrong_password_signin():
-#     """Tests signin function when user attempts to login 
-#         an account that already exists BUT the password is wrong. 
+#     """Tests signin function when user attempts to login
+#         an account that already exists BUT the password is wrong.
 #     """
 #     user = User('new')
 #     pas = 'prefix' + 'notpassword'
@@ -122,8 +124,6 @@ Returns:
 # def test_get_all_pages_min():
 #     data = Backend.get_all_pages(None)
 #     assert len(data) > 0
-
-
 """This tests the get_all_pages method retrieving at least one value.
 Run this test by running `pytest -v` in the /project directory.
 """
@@ -135,8 +135,6 @@ Run this test by running `pytest -v` in the /project directory.
 #     data = Backend.get_all_pages(None)
 #     assert data[0]["name"] == "Bunny Dango"
 #     assert data[1]["name"] == "Butterscotch Cinnamon Pie"
-
-
 """This tests the get_all_pages method retrieving all content in the right order.
 Run this test by running `pytest -v` in the /project directory.
 """
@@ -146,8 +144,6 @@ Run this test by running `pytest -v` in the /project directory.
 #     page_data = Backend.get_wiki_page(None, 2)
 #     assert page_data["id"] == '2'
 #     assert page_data["name"] == "Rare Candy"
-
-
 """This tests the get_wiki_page method retrieving the correct JSON object at specified id.
 Run this test by running `pytest -v` in the /project directory.
 """
@@ -159,12 +155,11 @@ Run this test by running `pytest -v` in the /project directory.
 #         assert page_data["id"] == "This cannot be accessed"
 #     except TypeError:
 #         pass
-
-
 """This tests the get_wiki_page method causing an exception if the 
 id it is trying to access does not exist.
 Run this test by running `pytest -v` in the /project directory.
 """
+
 
 def test_get_recipe_category_one_category():
     test_blob = MagicMock()
@@ -187,6 +182,8 @@ def test_get_recipe_category_one_category():
             print(result)
 
     assert len(result) == 1
+
+
 """ This test checks if there is one category in our json fields 
 
 We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
@@ -215,6 +212,8 @@ def test_get_recipe_category_no_category_field():
             print(result)
 
     assert len(result) == 0
+
+
 """ This test checks if there is no category field available 
 
 We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
@@ -243,11 +242,14 @@ def test_get_recipe_category_no_category_entry():
             print(result)
 
     assert len(result) == 0
+
+
 """ This test checks if there the category field is empty
 
 We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
 We also patch in our storage client and a json load
 """
+
 
 def test_get_selected_categories_one_category():
     test_blob = MagicMock()
@@ -270,11 +272,14 @@ def test_get_selected_categories_one_category():
             print(result)
 
     assert len(result) == 1
+
+
 """ This test checks if there is one category in our json fields that matched our mocked user input
 
 We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
 We also patch in our storage client and a json load
 """
+
 
 def test_get_selected_categories_no_category_field():
     test_blob = MagicMock()
@@ -291,17 +296,20 @@ def test_get_selected_categories_no_category_field():
 
             backend = Backend(test_storage_client)
 
-            mock_json.return_value = {"name":"Minecraft"}
+            mock_json.return_value = {"name": "Minecraft"}
             categories = ['pie']
             result = backend.get_selected_categories(categories)
             print(result)
 
     assert len(result) == 0
+
+
 """ This test checks if there is no category field in our mock JSON
 
 We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
 We also patch in our storage client and a json load
 """
+
 
 def test_get_selected_categories_no_category_entry():
     test_blob = MagicMock()
@@ -318,12 +326,14 @@ def test_get_selected_categories_no_category_entry():
 
             backend = Backend(test_storage_client)
 
-            mock_json.return_value = {"cate":""}
+            mock_json.return_value = {"cate": ""}
             categories = ['pie']
             result = backend.get_selected_categories(categories)
             print(result)
 
     assert len(result) == 0
+
+
 """ This test checks if there is no input in our category field
 
 We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function

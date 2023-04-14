@@ -14,6 +14,7 @@ from flaskr.backend import Backend
 """
 #teeest
 
+
 class Backend:
     '''def __init__(self,client):
         self.client = client'''
@@ -84,7 +85,7 @@ class Backend:
         Doesn't return anything as we are only communicating it with our backend
 
     """
-    
+
     def sign_up(self, new_user, password):
         """If username and password combination do not exist,
         create a blob with said information and send it to the
@@ -159,20 +160,22 @@ class Backend:
     def get_recipe_categories(self):
 
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
 
         recipe_categories = set()
 
         for blob in blobs:
-            page_data = json.loads(blob.download_as_bytes(client = None))
-            
+            page_data = json.loads(blob.download_as_bytes(client=None))
+
             if 'cate' not in page_data:
                 continue
 
             elif page_data['cate'] not in recipe_categories:
                 if page_data['cate'] != "":
                     recipe_categories.add(page_data['cate'])
-        
+
         return recipe_categories
 
     """ Obtains categories available in recipes
@@ -184,17 +187,19 @@ class Backend:
     Returns:
         A set of categories found
     """
-    
-    def get_selected_categories(self,selected_categories):
+
+    def get_selected_categories(self, selected_categories):
 
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
 
         resulting_pages = []
 
         for blob in blobs:
-            page_data = json.loads(blob.download_as_bytes(client = None))
-            
+            page_data = json.loads(blob.download_as_bytes(client=None))
+
             if 'cate' not in page_data:
                 continue
 
@@ -204,6 +209,7 @@ class Backend:
                     resulting_pages.append(page_data)
 
         return resulting_pages
+
     """ Gets recipes that fall into selected categories
     Parses through the JSON recipes and compares their categories to see 
     if they will be returned
@@ -214,7 +220,7 @@ class Backend:
         resulting_pages: An array of recipes that fall with user preferences
     """
 
-    def get_preferences(self,user):
+    def get_preferences(self, user):
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(user.username)
@@ -223,8 +229,8 @@ class Backend:
             return user_data["preferences"]
         else:
             return []
-            
-    def store_preferences(self,user, new_preferences):
+
+    def store_preferences(self, user, new_preferences):
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(user.username)
@@ -237,7 +243,7 @@ class Backend:
             return True
         else:
             return False
-    
+
     def reset_preferences(self, user):
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
@@ -248,4 +254,3 @@ class Backend:
             with blob.open("w") as f:
                 f.write(json.dumps(user_data))
             return
-    
