@@ -1,0 +1,166 @@
+{% extends "navbar.html" %}
+{% block content %}
+<body>
+    <div id="home_main_div" class="main_div">
+        <p class="home_desc">
+            {% if current_user.is_authenticated %}
+            Hi {{ name }}!
+            {% endif %}
+
+            Pending Approvals: <br>
+        </p>
+</body>
+
+{% for i in range(len): %}
+
+    <div class="fieldBlock">
+
+        <div class="title">Proposed:</div>
+
+        <form method="POST" action="/admin">
+
+            <input type="hidden" name="button_clicked" value="approve_{{ i }}">
+
+            <textarea readonly id="prev" name="previous" rows="15" cols="70">
+
+                "id": {{edited_pages[i]["id"]}}
+
+                "name": {{edited_pages[i]["name"]}}
+
+                "game": {{edited_pages[i]["game"]}}
+
+                "desc": {{edited_pages[i]["desc"]}}
+
+                "time": {{edited_pages[i]["time"]}}
+
+                "ingr": {{edited_pages[i]["ingr"]}}
+
+                "step": {{edited_pages[i]["step"]}}
+
+                "cate": {{edited_pages[i]["cate"]}}
+
+            </textarea>
+
+            <button class="button button1" type="submit">Approve</button>
+
+        </form>
+
+    </div>
+
+    <div class="fieldBlock2">
+
+        <div class="title">Previous:</div>
+
+        <form method="POST" action="/admin">
+
+            <input type="hidden" name="button_clicked" value="reject_{{ i }}">
+
+            <textarea readonly id="prev" name="previous" rows="15" cols="70">
+
+                "id": {{og_pages[i]["id"]}}
+
+                "name": {{og_pages[i]["name"]}}
+
+                "game": {{og_pages[i]["game"]}}
+
+                "desc": {{og_pages[i]["desc"]}}
+
+                "time": {{og_pages[i]["time"]}}
+
+                "ingr": {{og_pages[i]["ingr"]}}
+
+                "step": {{og_pages[i]["step"]}}
+
+                "cate": {{og_pages[i]["cate"]}}
+
+            </textarea>
+
+            <button class="button button2" type="submit">Reject</button>
+
+        </form>
+
+    </div>
+
+{% endfor %}
+
+</div>
+<script>
+    function approveFunction(index) {
+        return index
+}
+
+function rejectFunction(index) {
+    return index
+}
+</script>
+<style>
+    .home_desc
+    {
+        font-family: 'Golos Text', sans-serif;
+        font-size: 30px;
+        text-align: left;
+        padding: inline 20vw;
+        padding-top: 10vh;
+        margin-left: 20px;
+    }
+    .fieldBlock
+    {
+    display: block;
+    background-color: rgb(125, 182, 239);
+    width: 599px;
+    height: 325px;
+    float: left;
+    padding: 1vh;
+    padding-left: 4vh;
+    margin-left: 10px;
+    }
+    .fieldBlock2
+    {
+    display: block;
+    background-color: rgb(125, 182, 239);
+    width: 599px;
+    height: 325px;
+    float: left;
+    padding: 1vh;
+    padding-left: 4vh;
+    
+    }
+
+    .title
+    {
+    font-family: 'Golos Text', sans-serif;
+    font-size: 22px;
+    text-align: left;
+    text-align: left;
+    padding: inline 20vw;
+    padding-top: 1vh;
+    padding-left: 1vh;
+    
+    }
+
+    .textarea 
+    {
+        font-family: 'Golos Text', sans-serif;
+        font-size: 18px;
+        resize: none;
+        
+    }
+
+    .button 
+    {
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    }
+
+    .button1 {background-color: #4CAF50;} 
+    .button2 {background-color: #ba0000;} 
+
+</style>
+{% endblock %}
