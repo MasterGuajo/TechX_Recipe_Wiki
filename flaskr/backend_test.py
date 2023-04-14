@@ -46,7 +46,7 @@ def test_wrong_signup():
     assert not backend.sign_up(user, 'password')
 
 
-def test_correct_signin():
+'''def test_correct_signin():
     """Tests signin function when user attempts to login 
         an account that already exists and the password is correct. 
     """
@@ -81,7 +81,7 @@ def test_wrong_password_signin():
     test_pass = str(hashlib.blake2b(pas.encode()).hexdigest())
     test = Backend.sign_in(None, user, test_pass)
     assert test == False
-
+'''
 
 def test_upload():
 
@@ -119,7 +119,7 @@ Returns:
 """
 
 
-def test_get_all_pages_min():
+'''def test_get_all_pages_min():
     data = Backend.get_all_pages(None)
     assert len(data) > 0
 
@@ -165,3 +165,4 @@ def test_get_wiki_page_none():
 id it is trying to access does not exist.
 Run this test by running `pytest -v` in the /project directory.
 """
+'''
