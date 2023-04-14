@@ -15,6 +15,7 @@ from flaskr.backend import Backend
 """
 #teeest
 
+
 class Backend:
     '''def __init__(self,client):
         self.client = client'''
@@ -159,12 +160,14 @@ class Backend:
     def get_game_categories(self):
 
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
-        
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+
         game_categories = set()
 
         for blob in blobs:
-            page_data = json.loads(blob.download_as_bytes(client = None))
+            page_data = json.loads(blob.download_as_bytes(client=None))
 
             if 'game' not in page_data:
                 continue
@@ -174,6 +177,7 @@ class Backend:
                     game_categories.add(page_data['game'])
 
         return game_categories
+
     """ Obtains all game titles in current recipes
     Parses through all recipe JSONs in our bucket and creates a set of 
     all game titles available
@@ -184,16 +188,18 @@ class Backend:
     Returns:
         A set of game titles
     """
-    
+
     def get_time_ranges(self):
-        
+
         storage_client = storage.Client()
-        blobs = storage_client.list_blobs("nrjcontent", prefix="pages/", delimiter="/")
-        
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+
         time_ranges = set()
 
         for blob in blobs:
-            page_data = json.loads(blob.download_as_bytes(client = None))
+            page_data = json.loads(blob.download_as_bytes(client=None))
 
             if 'time' not in page_data:
                 continue
@@ -203,6 +209,7 @@ class Backend:
                     time_ranges.add(page_data['time'])
 
         return time_ranges
+
     """ Obrains all time ranges in current recipes
     Parses through all recipe JSONs in bucket and creates a set of all 
     time ranges available
@@ -213,4 +220,3 @@ class Backend:
     Returns:
         A set of time ranges    
     """
-

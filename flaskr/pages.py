@@ -258,7 +258,7 @@ def make_endpoints(app):
         logout_user()
         return redirect('/home')
 
-    @app.route("/search", methods=['POST','GET'])
+    @app.route("/search", methods=['POST', 'GET'])
     @app.route("/search")
     def search():
 
@@ -266,13 +266,18 @@ def make_endpoints(app):
         time_ranges = Backend.get_time_ranges(None)
 
         if request.method == "POST":
-            
+
             # Shows you current values
             selected_games = request.form.getlist('game_chosen')
             selected_times = request.form.get('time_chosen')
 
             # Return recipes variable
-            return render_template("search.html",game_categories = game_categories, time_ranges = time_ranges, 
-                                    selected_games = selected_games, selected_times = selected_times)
-            
-        return render_template("search.html",game_categories = game_categories, time_ranges = time_ranges)
+            return render_template("search.html",
+                                   game_categories=game_categories,
+                                   time_ranges=time_ranges,
+                                   selected_games=selected_games,
+                                   selected_times=selected_times)
+
+        return render_template("search.html",
+                               game_categories=game_categories,
+                               time_ranges=time_ranges)
