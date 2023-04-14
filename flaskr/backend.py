@@ -15,6 +15,7 @@ from flaskr.backend import Backend
 """
 #teeest
 
+
 class Backend:
     '''def __init__(self,client):
         self.client = client'''
@@ -186,15 +187,16 @@ class Backend:
 
     def surprise_me(self):
         storage_client = storage.Client()
-        blobs = list(storage_client.list_blobs("nrjcontent",
-                                          prefix="pages/",
-                                          delimiter="/"))
+        blobs = list(
+            storage_client.list_blobs("nrjcontent",
+                                      prefix="pages/",
+                                      delimiter="/"))
         index = random.randint(len(blobs))
         blob = blobs[index]
         page_data = json.loads(blob.download_as_bytes(client=None))
         return page_data
 
-    def get_preferences(self,user):
+    def get_preferences(self, user):
         """If blob with username does not exist,
         return an empty list. Otherwise, return 
         the preference list stored in the user
@@ -211,7 +213,8 @@ class Backend:
             return user_data["preferences"]
         else:
             return None
-    def store_preferences(self,user, new_preferences):
+
+    def store_preferences(self, user, new_preferences):
         """If blob with username does not exist,
         return false. Otherwise, iterate through
         new_preferences and add the ones that were 
@@ -231,7 +234,7 @@ class Backend:
         if blob.exists():
             user_data = json.loads(blob.download_as_bytes(client=None))
             if not user_data.get("preferences"):
-                user_data["preferences"] =[]
+                user_data["preferences"] = []
 
             for pref in new_preferences:
                 if pref not in user_data["preferences"]:
@@ -260,6 +263,3 @@ class Backend:
             user_data["preferences"] = []
             with blob.open("w") as f:
                 f.write(json.dumps(user_data))
-                    
-
-

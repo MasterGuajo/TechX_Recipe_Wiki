@@ -117,8 +117,6 @@ Uses:
 Returns:
     Our return statement is going to be whether or not our assertion passed or fail.
 """
-
-
 '''def test_get_all_pages_min():
     data = Backend.get_all_pages(None)
     assert len(data) > 0
@@ -160,11 +158,11 @@ def test_get_wiki_page_none():
     except TypeError:
         pass
 '''
-
 """This tests the get_wiki_page method causing an exception if the 
 id it is trying to access does not exist.
 Run this test by running `pytest -v` in the /project directory.
 """
+
 
 def test_correct_get_preferences():
     """Tests get_preferences function when the user profiles 
@@ -177,18 +175,22 @@ def test_correct_get_preferences():
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = True
     bucket.blob.return_value = blob
-    blob.download_as_bytes.return_value = {"password":"password", "preferences":[]}
+    blob.download_as_bytes.return_value = {
+        "password": "password",
+        "preferences": []
+    }
 
     expected = []
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"password":"password", "preferences":[]}
+
+            mock_json.return_value = {"password": "password", "preferences": []}
             user = User('new')
             test = backend.get_preferences(user)
     assert test == expected
+
 
 def test_wrong_get_preferences():
     """Tests get_preferences function when the user profiles 
@@ -201,16 +203,20 @@ def test_wrong_get_preferences():
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = False
     bucket.blob.return_value = blob
-    blob.download_as_bytes.return_value = {"password":"password", "preferences":[]}
+    blob.download_as_bytes.return_value = {
+        "password": "password",
+        "preferences": []
+    }
 
     expected = []
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
-        
+
         user = User('new')
         backend = Backend(storage_client)
         test = backend.get_preferences(user)
     assert test != expected
+
 
 def test_right_store_preferences():
     """Tests store_preferences function when the user marked
@@ -223,17 +229,20 @@ def test_right_store_preferences():
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = True
     bucket.blob.return_value = blob
-    blob.download_as_bytes.return_value = {"password":"password", "preferences":[]}
-
+    blob.download_as_bytes.return_value = {
+        "password": "password",
+        "preferences": []
+    }
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"password":"password", "preferences":[]}
+
+            mock_json.return_value = {"password": "password", "preferences": []}
             user = User('new')
-            backend.store_preferences(user,["category1"])
+            backend.store_preferences(user, ["category1"])
     assert blob.open.return_value.write.assert_called_once
+
 
 def test_wrong_store_preferences():
     """Tests store_preferences function when the user marked
@@ -246,17 +255,20 @@ def test_wrong_store_preferences():
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = False
     bucket.blob.return_value = blob
-    blob.download_as_bytes.return_value = {"password":"password", "preferences":[]}
-
+    blob.download_as_bytes.return_value = {
+        "password": "password",
+        "preferences": []
+    }
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"password":"password", "preferences":[]}
+
+            mock_json.return_value = {"password": "password", "preferences": []}
             user = User('new')
-            test = backend.store_preferences(user,["category1"])
+            test = backend.store_preferences(user, ["category1"])
     assert test == False
+
 
 def test_wrong_store_preferences2():
     """Tests store_preferences function when the user marked
@@ -272,17 +284,20 @@ def test_wrong_store_preferences2():
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = True
     bucket.blob.return_value = blob
-    blob.download_as_bytes.return_value = {"password":"password", "preferences":[]}
-
+    blob.download_as_bytes.return_value = {
+        "password": "password",
+        "preferences": []
+    }
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"password":"password"}
+
+            mock_json.return_value = {"password": "password"}
             user = User('new')
-            backend.store_preferences(user,["category1"])
+            backend.store_preferences(user, ["category1"])
     assert blob.open.return_value.write.assert_called_once
+
 
 def test_right_reset_preferences():
     """
@@ -295,17 +310,23 @@ def test_right_reset_preferences():
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = True
     bucket.blob.return_value = blob
-    blob.download_as_bytes.return_value = {"password":"password", "preferences":["category1"]}
-
+    blob.download_as_bytes.return_value = {
+        "password": "password",
+        "preferences": ["category1"]
+    }
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"password":"password","preferences":["category1"]}
+
+            mock_json.return_value = {
+                "password": "password",
+                "preferences": ["category1"]
+            }
             user = User('new')
             backend.reset_preferences(user)
     assert blob.open.return_value.write.assert_called_once
+
 
 def test_wrong_reset_preferences():
     """
@@ -322,14 +343,16 @@ def test_wrong_reset_preferences():
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = True
     bucket.blob.return_value = blob
-    blob.download_as_bytes.return_value = {"password":"password", "preferences":["category1"]}
-
+    blob.download_as_bytes.return_value = {
+        "password": "password",
+        "preferences": ["category1"]
+    }
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"password":"password"}
+
+            mock_json.return_value = {"password": "password"}
             user = User('new')
             backend.reset_preferences(user)
     assert blob.open.return_value.write.assert_called_once
