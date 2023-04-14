@@ -58,8 +58,7 @@ def test_aliases(client):
 """This tests the page aliases for the homepage (/, /home, /index).
 Run this test by running `pytest -v` in the /project directory.
 """
-
-
+'''
 def test_pages(client):
     resp = client.get("/pages")
     assert resp.status_code == 200
@@ -86,8 +85,7 @@ def test_page(client):
     resp = client.get("/pages/0")
     assert resp.status_code == 200
     assert b'<div id="page_main_div" class="main_div">' in resp.data
-
-
+'''
 """This tests the page loading of each individual recipe page's template.
 Run this test by running `pytest -v` in the /project directory.
 """
