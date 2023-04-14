@@ -165,3 +165,19 @@ def test_get_wiki_page_none():
 id it is trying to access does not exist.
 Run this test by running `pytest -v` in the /project directory.
 """
+
+# def test_create_copy_file_unique_name():
+#     storage_client = MagicMock()
+#     bucket = MagicMock()
+#     blob = MagicMock()
+#     storage_client.bucket.return_value = bucket
+#     blob.exists.return_value = True
+#     bucket.blob.return_value = blob
+
+#     with patch('google.cloud.storage.Client', return_value=storage_client):
+#         with patch('json.loads', new_callable=MagicMock) as mock_json:
+#             backend = Backend(storage_client)
+#             mock_json.return_value = {'blobname':'test.json'}
+#             test = backend.create_copy_file("{'blobname':'test.json'}")
+
+#     assert test == "pages/temp/test(2).json"

@@ -18,6 +18,9 @@
             <li><a class="navbar_link" href="/login">Log In</a></li>
             {% endif %}
             {% if current_user.is_authenticated %}<li><a class="navbar_link" href="/logout">LogOut</a></li>{% endif %}
+            {% if current_user.privileges == "admin" %}
+            <li><a class="navbar_link" href="/approvals"></a></li>
+            {% endif %}
         </ul>
     </div>
 

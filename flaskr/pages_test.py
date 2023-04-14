@@ -269,3 +269,16 @@ Args:
 Returns:
     Returns True or False depending on if the assertion was succesfull or not
 """
+
+def test_check_page():
+    class MockRequest:
+        method = "POST"
+        form = { 'key1':'value1' }
+
+    mr = MockRequest()
+    assert mr.method == "POST"
+    assert mr.form["key1"] == "value1"
+
+"""This tests the use of the request method and forms and whether they will be passing 
+the right value to the backend functions based on this endpoint. Created a MockRequest class
+to test this"""

@@ -18,6 +18,8 @@ class User(UserMixin):
           username: Defines identifier for User.
         """
         self.username = username
+        self.roles = "default"
+
 
     def get_id(self):
         """Initializes the instance based on spam preference.
@@ -26,3 +28,12 @@ class User(UserMixin):
           likes_spam: Defines if instance exhibits this preference.
         """
         return self.username
+
+    def is_admin(self):
+        return True if self.privileges == "admin" else False
+
+    class Role():
+        name = "default"        
+
+    class UserRole():
+        id = 0
