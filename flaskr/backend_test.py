@@ -118,8 +118,6 @@ Uses:
 Returns:
     Our return statement is going to be whether or not our assertion passed or fail.
 """
-
-
 '''def test_get_all_pages_min():
     data = Backend.get_all_pages(None)
     assert len(data) > 0
@@ -161,11 +159,11 @@ def test_get_wiki_page_none():
     except TypeError:
         pass
 '''
-
 """This tests the get_wiki_page method causing an exception if the 
 id it is trying to access does not exist.
 Run this test by running `pytest -v` in the /project directory.
 """
+
 
 def test_correct_belongs_to_game():
     """Tests belongs_to_game function when the user 
@@ -183,16 +181,16 @@ def test_correct_belongs_to_game():
     storage_client.bucket.return_value = bucket
 
     # Test it later
-    blob.download_as_bytes.return_value = {"game":"zelda"}
-    
+    blob.download_as_bytes.return_value = {"game": "zelda"}
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"game":"zelda"}
+
+            mock_json.return_value = {"game": "zelda"}
             test = backend.belongs_to_game(["zelda"])
     assert len(test) == 1
+
 
 def test_belongs_to_game_not_found():
     """Tests belongs_to_game function when the user 
@@ -211,17 +209,17 @@ def test_belongs_to_game_not_found():
     storage_client.bucket.return_value = bucket
 
     # Test it later
-    blob.download_as_bytes.return_value = {"game":"zelda"}
-    
+    blob.download_as_bytes.return_value = {"game": "zelda"}
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"game":"not zelda"}
+
+            mock_json.return_value = {"game": "not zelda"}
             test = backend.belongs_to_game(["zelda"])
 
     assert len(test) == 0
+
 
 def test_correct_is_quick_enough():
     """Tests is_quick_enough function when the user 
@@ -239,16 +237,16 @@ def test_correct_is_quick_enough():
     storage_client.bucket.return_value = bucket
 
     # Test it later
-    blob.download_as_bytes.return_value = {"time":"60"}
-    
+    blob.download_as_bytes.return_value = {"time": "60"}
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"time":"60"}
+
+            mock_json.return_value = {"time": "60"}
             test = backend.is_quick_enough("60")
     assert len(test) == 1
+
 
 def test_correct_is_not_quick_enough():
     """Tests is_quick_enough function when the user 
@@ -267,16 +265,16 @@ def test_correct_is_not_quick_enough():
     storage_client.bucket.return_value = bucket
 
     # Test it later
-    blob.download_as_bytes.return_value = {"time":"90"}
-    
+    blob.download_as_bytes.return_value = {"time": "90"}
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            
-            mock_json.return_value = {"time":"90"}
+
+            mock_json.return_value = {"time": "90"}
             test = backend.is_quick_enough("60")
     assert len(test) == 0
+
 
 def test_surprise_me():
     """Tests surprise_me function when the user 
@@ -299,16 +297,15 @@ def test_surprise_me():
     storage_client.bucket.return_value = bucket
 
     # Test it later
-    blob.download_as_bytes.return_value = {"id":"0"}
-    blob1.download_as_bytes.return_value = {"id":"1"}
-    blob2.download_as_bytes.return_value = {"id":"2"}
-    
+    blob.download_as_bytes.return_value = {"id": "0"}
+    blob1.download_as_bytes.return_value = {"id": "1"}
+    blob2.download_as_bytes.return_value = {"id": "2"}
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
-            i = random.randint(0,2)
-            mock_json.return_value = {"id":str(i)}
+            i = random.randint(0, 2)
+            mock_json.return_value = {"id": str(i)}
             test = backend.surprise_me()
             temp = int(test["id"])
     assert temp == 0 or temp == 1 or temp == 2

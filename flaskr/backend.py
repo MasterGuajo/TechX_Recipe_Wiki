@@ -201,12 +201,11 @@ class Backend:
             the list of all recipe pages.
         """
         storage_client = storage.Client()
-        blobs = list(storage_client.list_blobs("nrjcontent",
-                                          prefix="pages/",
-                                          delimiter="/"))
-        index = random.randint(0, len(blobs)-1)
+        blobs = list(
+            storage_client.list_blobs("nrjcontent",
+                                      prefix="pages/",
+                                      delimiter="/"))
+        index = random.randint(0, len(blobs) - 1)
         blob = blobs[index]
         page_data = json.loads(blob.download_as_bytes(client=None))
         return page_data
-
-
