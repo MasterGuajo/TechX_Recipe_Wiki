@@ -237,11 +237,12 @@ def make_endpoints(app):
           user_name: String that holds username.
           password: String that holds password with prefix to be hashed.
         """
+        backend = Backend(storage.Client())
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
         flask_user = User(user_name)
-        if Backend.sign_in(None, flask_user, str(hash)):
+        if backend.sign_in(flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
         else:

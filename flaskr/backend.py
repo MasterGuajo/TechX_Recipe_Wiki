@@ -14,6 +14,7 @@ from flaskr.backend import Backend
 """
 #teeest
 
+
 class Backend:
     '''def __init__(self,client):
         self.client = client'''
@@ -119,8 +120,8 @@ class Backend:
           existing_user: User object that holds username.
           password: String that holds hashed password with prefix.
         """
-        storage_client = storage.Client()
-        bucket = storage_client.bucket("userpass")
+        # storage_client = storage.Client()
+        bucket = self.storage_client.bucket("userpass")
         blob = bucket.blob(existing_user.username)
         if blob.exists():
             user_data = json.loads(blob.download_as_bytes(client=None))
