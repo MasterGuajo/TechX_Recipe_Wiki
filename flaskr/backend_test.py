@@ -305,4 +305,4 @@ def test_surprise_me():
                 test = backend.surprise_me()
                 temp = int(test["id"])
                 result.append(temp)
-    assert 0 in result  and 1 in result  and 2 in result 
+    assert 0 in result and 1 in result and 2 in result
