@@ -95,7 +95,7 @@ Run this test by running `pytest -v` in the /project directory.
 
 @pytest.fixture
 def user_example():
-    user = User('testing')
+    user = User('testing', "default")
     return user
 
 
@@ -178,7 +178,7 @@ def test_logout(app, user_example):
 def test_upload_no_file(app):
     app.test_client_class = FlaskLoginClient
 
-    user = User("testing@gmail.com")
+    user = User("testing@gmail.com", "default")
 
     with patch('flaskr.backend.Backend.upload'):
 
@@ -210,7 +210,7 @@ Returns:
 def test_upload_invalid_file(app):
     app.test_client_class = FlaskLoginClient
 
-    user = User("testing@gmail.com")
+    user = User("testing@gmail.com", "default")
 
     with patch('flaskr.backend.Backend.upload'):
 
@@ -242,7 +242,7 @@ Returns:
 def test_upload_successful(app):
     app.test_client_class = FlaskLoginClient
 
-    user = User("testing@gmail.com")
+    user = User("testing@gmail.com", "default")
 
     with patch('flaskr.backend.Backend.upload'):
 
@@ -268,4 +268,56 @@ Args:
 
 Returns:
     Returns True or False depending on if the assertion was succesfull or not
+"""
+
+def test_admin_nav_button(app):
+    app.test_client_class = FlaskLoginClient
+    user = User("admintest", "admin")
+    with app.test_client(user=user) as client:
+        res= client.get('/')
+        assert res.status_code == 200
+        assert b'<li><a class="navbar_link" href="/admin">Admin</a></li>' in res.data
+""" Tests that the admin panel button loads for admins
+
+Uses 'admintest' user to check the navbar contains the correct button for the admin panel.
+"""
+
+def test_default_no_admin_button(app):
+    app.test_client_class = FlaskLoginClient
+    user = User("testing", "default")
+    with app.test_client(user=user) as client:
+        res= client.get('/')
+        assert res.status_code == 200
+        assert b'<li><a class="navbar_link" href="/admin">Admin</a></li>' not in res.data
+""" Tests that the admin panel button does not load for default users.
+
+Uses 'testing' user to check the navbar does not contain the admin panel button.
+"""
+
+def test_admin_user(app):
+    app.test_client_class = FlaskLoginClient
+    user = User("admintest", "admin")
+    with app.test_client(user=user) as client:
+        res= client.get('/admin')
+        assert res.status_code == 200
+        assert b'Hello admin!' in res.data
+""" Tests that the admin user is able to access the /admin route correctly.
+
+With a mock login client, this test runs with an "admintest" user with admin permissions. They then 
+get the response from the /admin route and check if the message "Hello admin!" is contained.
+
+**The message condition may need to be changed after merging
+"""
+
+def test_default_user(app):
+    app.test_client_class = FlaskLoginClient
+    user = User("testing", "default")
+    with app.test_client(user=user) as client:
+        res= client.get('/admin')
+        assert res.status_code == 200
+        assert b'You do not have access to this page.' in res.data
+""" Tests that a default user is not able to access the /admin route.
+
+With a mock login client, this test runs with a default permission user and makes sure
+they are not able to access the admin page's contents.
 """

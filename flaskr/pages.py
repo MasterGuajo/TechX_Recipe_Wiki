@@ -26,7 +26,10 @@ def make_endpoints(app):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User(user_id)
+        if user_id in open('./flaskr/admins.txt').read():
+            return User(user_id, "admin")
+        else:
+            return User(user_id, "default")
 
     @app.route("/")
     @app.route("/index")
@@ -211,7 +214,12 @@ def make_endpoints(app):
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        flask_user = User(user_name)
+        
+        if user_name in open('./flaskr/admins.txt').read():
+            flask_user = User(user_name, "admin")
+        else:
+            flask_user = User(user_name, "default")
+            
         if backend.sign_up(flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
@@ -240,7 +248,12 @@ def make_endpoints(app):
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        flask_user = User(user_name)
+
+        if user_name in open('./flaskr/admins.txt').read():
+            flask_user = User(user_name, "admin")
+        else:
+            flask_user = User(user_name, "default")
+            
         if Backend.sign_in(None, flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
@@ -255,3 +268,16 @@ def make_endpoints(app):
         """
         logout_user()
         return redirect('/home')
+
+
+    @app.route("/admin")
+    def admin():
+        backend = Backend(storage.Client())
+
+        return render_template("admin.html")
+
+    """
+    A dummy route for the admin page. Uses ifs in the jinja templates to verify admin status.
+    Add your code for the admin page to this method.
+    """
+        

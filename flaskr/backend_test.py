@@ -25,7 +25,7 @@ def test_correct_signup():
     #bucket.blob.return_value = blob
     with patch('google.cloud.storage.Client', return_value=storage_client):
         backend = Backend(storage_client)
-        user = User('NewUserNameNeverUsedBefore')
+        user = User('NewUserNameNeverUsedBefore', 'default')
         backend.sign_up(user, 'wdjbvwebjh')
     assert blob.open.return_value.write.assert_called_once
 
@@ -42,7 +42,7 @@ def test_wrong_signup():
     blob.exists.return_value = True
     with patch('google.cloud.storage.Client', return_value=storage_client):
         backend = Backend(storage_client)
-        user = User('ExistingUser')
+        user = User('ExistingUser', 'default')
     assert not backend.sign_up(user, 'password')
 
 
@@ -50,7 +50,7 @@ def test_correct_signin():
     """Tests signin function when user attempts to login 
         an account that already exists and the password is correct. 
     """
-    user = User('new')
+    user = User('new', 'default')
     pas = 'prefix' + 'password'
     test_pass = str(hashlib.blake2b(pas.encode()).hexdigest())
     test = Backend.sign_in(None, user, test_pass)
@@ -68,7 +68,7 @@ def test_wrong_signin():
     blob.exists.return_value = False
     with patch('google.cloud.storage.Client', return_value=storage_client):
         backend = Backend(storage_client)
-        user = User('NonExistingUser')
+        user = User('NonExistingUser', 'default')
     assert not backend.sign_up(user, 'password')
 
 
@@ -76,7 +76,7 @@ def test_wrong_password_signin():
     """Tests signin function when user attempts to login 
         an account that already exists BUT the password is wrong. 
     """
-    user = User('new')
+    user = User('new', 'default')
     pas = 'prefix' + 'notpassword'
     test_pass = str(hashlib.blake2b(pas.encode()).hexdigest())
     test = Backend.sign_in(None, user, test_pass)
