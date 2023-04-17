@@ -266,8 +266,9 @@ def make_endpoints(app):
         Args:
           button_clicked: approve or reject
         """
-        lst1 = Backend.get_all_pages(
-            None)  #SHOULD PULL Original pages and edited pages instead
+        backend = Backend(storage.Client())
+        lst1 = backend.get_all_pages()
+        #SHOULD PULL Original pages and edited pages instead
 
         if request.method == "POST":
             button_clicked = request.form.get('button_clicked')
