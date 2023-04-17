@@ -180,9 +180,6 @@ def test_correct_belongs_to_game():
 
     storage_client.bucket.return_value = bucket
 
-    # Test it later
-    blob.download_as_bytes.return_value = {"game": "zelda"}
-
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
@@ -207,9 +204,6 @@ def test_belongs_to_game_not_found():
     storage_client.list_blobs.return_value = [blob]
 
     storage_client.bucket.return_value = bucket
-
-    # Test it later
-    blob.download_as_bytes.return_value = {"game": "zelda"}
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
@@ -301,11 +295,14 @@ def test_surprise_me():
     blob1.download_as_bytes.return_value = {"id": "1"}
     blob2.download_as_bytes.return_value = {"id": "2"}
 
-    with patch('google.cloud.storage.Client', return_value=storage_client):
-        with patch('json.loads', new_callable=MagicMock) as mock_json:
-            backend = Backend(storage_client)
-            i = random.randint(0, 2)
-            mock_json.return_value = {"id": str(i)}
-            test = backend.surprise_me()
-            temp = int(test["id"])
-    assert temp == 0 or temp == 1 or temp == 2
+    result = []
+    for i in range(10):
+        with patch('google.cloud.storage.Client', return_value=storage_client):
+            with patch('json.loads', new_callable=MagicMock) as mock_json:
+                backend = Backend(storage_client)
+                i = random.randint(-1, 2)
+                mock_json.return_value = {"id": str(i)}
+                test = backend.surprise_me()
+                temp = int(test["id"])
+                result.append(temp)
+    assert 0 in result  and 1 in result  and 2 in result 
