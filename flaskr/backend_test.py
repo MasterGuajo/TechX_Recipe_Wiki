@@ -339,3 +339,111 @@ def test_get_selected_categories_no_category_entry():
 We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
 We also patch in our storage client and a json load
 """
+
+
+def test_delete_preferences():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {
+                'password': 'password',
+                'preferences': ['cake', 'fruit']
+            }
+            user = User('new')
+
+            deleted_preferences = ['cake']
+
+            result = backend.delete_preferences(user, deleted_preferences)
+            print(result)
+
+    assert len(result) == 1
+
+
+""" Test that delete_prefences is working correctly by removing one item
+
+We mock a blob, bucket and storage_client, but also patch in our GCS and json.loads
+We set our user to have only two prefernces but later remove one
+"""
+
+
+def test_delete_preferences_no_saved_preferences():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {'password': 'password', 'preferences': []}
+            user = User('new')
+
+            deleted_preferences = ['cake', 'pie']
+
+            result = backend.delete_preferences(user, deleted_preferences)
+            print(result)
+
+    assert len(result) == 0
+
+
+""" Test that delete_prefences is working correctly by trying to remove items from an empty list
+
+We mock a blob, bucket and storage_client, but also patch in our GCS and json.loads
+We set our user to have no preferences, and then try to delete something (it will remain the same)
+"""
+
+
+def test_delete_preferences_empty_delete_preferences():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {
+                'password': 'password',
+                'preferences': ['cake', 'pie']
+            }
+            user = User('new')
+
+            deleted_preferences = []
+
+            result = backend.delete_preferences(user, deleted_preferences)
+            print(result)
+
+    assert len(result) == 2
+
+
+""" Test that delete_prefences is working correctly by giving no values
+
+We mock a blob, bucket and storage_client, but also patch in our GCS and json.loads
+We set our user to have only two prefernces and then try and remove from an empty list
+"""

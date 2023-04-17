@@ -237,7 +237,8 @@ class Backend:
         if blob.exists():
             user_data = json.loads(blob.download_as_bytes(client=None))
             for pref in new_preferences:
-                user_data["preferences"].append(pref)
+                if pref not in user_data["preferences"]:
+                    user_data["preferences"].append(pref)
             with blob.open("w") as f:
                 f.write(json.dumps(user_data))
             return True
@@ -254,3 +255,30 @@ class Backend:
             with blob.open("w") as f:
                 f.write(json.dumps(user_data))
             return
+
+    def delete_preferences(self, user, deleted_preferences):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("userpass")
+        blob = bucket.blob(user.username)
+        if blob.exists():
+            user_data = json.loads(blob.download_as_bytes(client=None))
+            original = user_data["preferences"]
+            delete = deleted_preferences
+
+            result = [element for element in original if element not in delete]
+
+            user_data["preferences"] = result
+            with blob.open("w") as f:
+                f.write(json.dumps(user_data))
+            return result
+
+    """ Deletes preferences from user input
+    Accesses the current users preferences, and using list comprehension, makes a new list that 
+    removes only the elements that the user selected
+
+    Args:
+        User and list of soon to be deleted_preferences
+
+    Returns:
+        Newly updated user_preferences
+    """

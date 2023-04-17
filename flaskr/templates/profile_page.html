@@ -7,17 +7,28 @@
 
     <div id="options" class="options_div">
         <h3>What categories are you interested in?</h3>
-
+        <h2>Wel {{ preferences }} !</h2>
         <form method="POST">
 
             {% for category in recipe_categories %}
+                
+                {% if category in preferences %}
 
-                <input type="checkbox" name="category_chosen" value="{{ category }}"
-                <label for="{{ category }}"> {{ category }}</label><br>
+                    <input type="checkbox" name="category_chosen" value="{{ category }}" checked>
+                    <label for="{{ category }}"> {{ category }}</label><br>
+                
+                {% else %}
+
+                    <input type="checkbox" name="category_chosen" value="{{ category }}">
+                    <label for="{{ category }}"> {{ category }}</label><br>
+
+                {% endif %}
 
             {% endfor %}
 
             <input class="button" type="submit" value="Submit Preferences">
+            
+            <input class="button" type="submit" name="remove" value="Remove Checked Preferences">
 
             <input class="button" type="submit" name="reset" value="Reset Preferences">
         </form>
