@@ -169,7 +169,9 @@ class Backend:
         for blob in blobs:
             page_data = json.loads(blob.download_as_bytes(client=None))
             for game in game_titles:
-                if game.lower() == page_data["game"].lower():
+                if 'game' not in page_data:
+                    continue
+                elif game.lower() == page_data["game"].lower():
                     result_pages.add(page_data)
         return result_pages
 
@@ -181,7 +183,9 @@ class Backend:
                                           delimiter="/")
         for blob in blobs:
             page_data = json.loads(blob.download_as_bytes(client=None))
-            if int(time_range) >= int(page_data["time"]):
+            if 'time' not in page_data:
+                continue
+            elif int(time_range) >= int(page_data["time"]):
                 result_pages.add(page_data)
         return result_pages
 
@@ -191,7 +195,7 @@ class Backend:
             storage_client.list_blobs("nrjcontent",
                                       prefix="pages/",
                                       delimiter="/"))
-        index = random.randint(len(blobs))
+        index = random.randint(len(blobs) - 1)
         blob = blobs[index]
         page_data = json.loads(blob.download_as_bytes(client=None))
         return page_data

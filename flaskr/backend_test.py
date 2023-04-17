@@ -244,7 +244,7 @@ def test_right_store_preferences():
     assert blob.open.return_value.write.assert_called_once
 
 
-def test_wrong_store_preferences():
+def test_store_preferences_nonexisting_user():
     """Tests store_preferences function when the user marked
     new preferences and we need to store these new categories
     into their user information BUT the user blob does not exist.
@@ -270,7 +270,7 @@ def test_wrong_store_preferences():
     assert test == False
 
 
-def test_wrong_store_preferences2():
+def test_store_preferences_old_user():
     """Tests store_preferences function when the user marked
         new preferences and we need to store these new categories
         into their user information BUT the user was created without a 
@@ -325,7 +325,9 @@ def test_right_reset_preferences():
             }
             user = User('new')
             backend.reset_preferences(user)
+            test_preference_contents = backend.get_preferences(user)
     assert blob.open.return_value.write.assert_called_once
+    assert len(test_preference_contents) == 0
 
 
 def test_wrong_reset_preferences():
@@ -355,4 +357,6 @@ def test_wrong_reset_preferences():
             mock_json.return_value = {"password": "password"}
             user = User('new')
             backend.reset_preferences(user)
+            test_preference_contents = backend.get_preferences(user)
     assert blob.open.return_value.write.assert_called_once
+    assert len(test_preference_contents) == 0
