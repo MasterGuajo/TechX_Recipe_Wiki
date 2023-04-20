@@ -22,22 +22,9 @@
             <input type="hidden" name="button_clicked" value="approve_{{ i }}">
 
             <textarea readonly id="new" name="edited" rows="15" cols="70">
-
-                "id": {{edited_pages[i]["id"]}}
-
-                "name": {{edited_pages[i]["name"]}}
-
-                "game": {{edited_pages[i]["game"]}}
-
-                "desc": {{edited_pages[i]["desc"]}}
-
-                "time": {{edited_pages[i]["time"]}}
-
-                "ingr": {{edited_pages[i]["ingr"]}}
-
-                "step": {{edited_pages[i]["step"]}}
-
-                "cate": {{edited_pages[i]["cate"]}}
+                {% for key, value in edited_pages[i].items(): %}
+                    {{key}} : {{value}}
+                {% endfor %}
 
             </textarea>
 
@@ -57,21 +44,10 @@
 
             <textarea readonly id="prev" name="previous" rows="15" cols="70">
 
-                "id": {{og_pages[i]["id"]}}
-
-                "name": {{og_pages[i]["name"]}}
-
-                "game": {{og_pages[i]["game"]}}
-
-                "desc": {{og_pages[i]["desc"]}}
-
-                "time": {{og_pages[i]["time"]}}
-
-                "ingr": {{og_pages[i]["ingr"]}}
-
-                "step": {{og_pages[i]["step"]}}
-
-                "cate": {{og_pages[i]["cate"]}}
+                {% for key, value in og_pages[i].items(): %}
+                    {{key}} : {{value}}
+                    
+                {% endfor %}
 
             </textarea>
 
