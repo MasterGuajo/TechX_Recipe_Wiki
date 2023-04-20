@@ -1,0 +1,8 @@
+Nicole
+Rodrigo
+Jorge
+
+
+*Add usernames here to designate admin status*
+
+admintest

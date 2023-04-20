@@ -90,7 +90,7 @@ Run this test by running `pytest -v` in the /project directory.
 
 @pytest.fixture
 def user_example():
-    user = User('testing')
+    user = User('testing', "default")
     return user
 
 
@@ -173,7 +173,7 @@ def test_logout(app, user_example):
 def test_upload_no_file(app):
     app.test_client_class = FlaskLoginClient
 
-    user = User("testing@gmail.com")
+    user = User("testing@gmail.com", "default")
 
     with patch('flaskr.backend.Backend.upload'):
 
@@ -205,7 +205,7 @@ Returns:
 def test_upload_invalid_file(app):
     app.test_client_class = FlaskLoginClient
 
-    user = User("testing@gmail.com")
+    user = User("testing@gmail.com", "default")
 
     with patch('flaskr.backend.Backend.upload'):
 
@@ -237,7 +237,7 @@ Returns:
 def test_upload_successful(app):
     app.test_client_class = FlaskLoginClient
 
-    user = User("testing@gmail.com")
+    user = User("testing@gmail.com", "default")
 
     with patch('flaskr.backend.Backend.upload'):
 
