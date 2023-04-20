@@ -9,6 +9,7 @@ from flaskr.user import User
 from google.cloud import storage
 import json
 import hashlib
+import random
 """Tests for Backend."""
 
 
@@ -159,3 +160,146 @@ Run this test by running `pytest -v` in the /project directory.
 id it is trying to access does not exist.
 Run this test by running `pytest -v` in the /project directory.
 """
+
+
+def test_correct_belongs_to_game():
+    """Tests belongs_to_game function when the user 
+        searches for a game title. 
+    """
+    storage_client = MagicMock()
+    bucket = MagicMock()
+    blob = MagicMock()
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    storage_client.list_blobs.return_value = [blob]
+
+    storage_client.bucket.return_value = bucket
+
+    with patch('google.cloud.storage.Client', return_value=storage_client):
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+            backend = Backend(storage_client)
+
+            mock_json.return_value = {"game": "zelda"}
+            test = backend.belongs_to_game(["zelda"])
+    assert len(test) == 1
+
+
+def test_belongs_to_game_not_found():
+    """Tests belongs_to_game function when the user 
+        searches for a game title but no recipe
+        matches the game.  
+    """
+    storage_client = MagicMock()
+    bucket = MagicMock()
+    blob = MagicMock()
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    storage_client.list_blobs.return_value = [blob]
+
+    storage_client.bucket.return_value = bucket
+
+    with patch('google.cloud.storage.Client', return_value=storage_client):
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+            backend = Backend(storage_client)
+
+            mock_json.return_value = {"game": "not zelda"}
+            test = backend.belongs_to_game(["zelda"])
+
+    assert len(test) == 0
+
+
+def test_correct_is_quick_enough():
+    """Tests is_quick_enough function when the user 
+        searches for a time range  
+    """
+    storage_client = MagicMock()
+    bucket = MagicMock()
+    blob = MagicMock()
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    storage_client.list_blobs.return_value = [blob]
+
+    storage_client.bucket.return_value = bucket
+
+    # Test it later
+    blob.download_as_bytes.return_value = {"time": "60"}
+
+    with patch('google.cloud.storage.Client', return_value=storage_client):
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+            backend = Backend(storage_client)
+
+            mock_json.return_value = {"time": "60"}
+            test = backend.is_quick_enough("60")
+    assert len(test) == 1
+
+
+def test_correct_is_not_quick_enough():
+    """Tests is_quick_enough function when the user 
+        searches for a time range but no recipe
+        matches the range.  
+    """
+    storage_client = MagicMock()
+    bucket = MagicMock()
+    blob = MagicMock()
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    storage_client.list_blobs.return_value = [blob]
+
+    storage_client.bucket.return_value = bucket
+
+    # Test it later
+    blob.download_as_bytes.return_value = {"time": "90"}
+
+    with patch('google.cloud.storage.Client', return_value=storage_client):
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+            backend = Backend(storage_client)
+
+            mock_json.return_value = {"time": "90"}
+            test = backend.is_quick_enough("60")
+    assert len(test) == 0
+
+
+def test_surprise_me():
+    """Tests surprise_me function when the user 
+        wants to receieve a random recipe to make. 
+    """
+    storage_client = MagicMock()
+    bucket = MagicMock()
+    blob = MagicMock()
+    blob1 = MagicMock()
+    blob2 = MagicMock()
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    bucket.blob1.return_value = blob1
+    bucket.blob2.return_value = blob2
+
+    storage_client.list_blobs.return_value = [blob, blob1, blob2]
+
+    storage_client.bucket.return_value = bucket
+
+    # Test it later
+    blob.download_as_bytes.return_value = {"id": "0"}
+    blob1.download_as_bytes.return_value = {"id": "1"}
+    blob2.download_as_bytes.return_value = {"id": "2"}
+
+    result = []
+    for i in range(10):
+        with patch('google.cloud.storage.Client', return_value=storage_client):
+            with patch('json.loads', new_callable=MagicMock) as mock_json:
+                backend = Backend(storage_client)
+                i = random.randint(-1, 2)
+                mock_json.return_value = {"id": str(i)}
+                test = backend.surprise_me()
+                temp = int(test["id"])
+                result.append(temp)
+    assert 0 in result and 1 in result and 2 in result

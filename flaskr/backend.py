@@ -3,6 +3,7 @@ from flask import Flask, flash, request, redirect, url_for, send_file
 import base64
 import io
 import json
+import random
 """Backend Class for Program, Retrieves Data from Cloud Storage for Use.
 
 Typical usage example:
@@ -156,6 +157,65 @@ class Backend:
         The Bytes of the image with base64 encoding.
     """
 
+<<<<<<< flaskr/backend.py
+    def belongs_to_game(self, game_titles):
+        """Iterate through pages, evaluate if their game title
+            belongs to the list of titles the user chose.
+            Return all pages that match the game title.        
+
+        Args:
+          game_titles: List of game titles selected by the user.
+        """
+        result_pages = []
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client=None))
+            for game in game_titles:
+                if game.lower() == page_data["game"].lower():
+                    result_pages.append(page_data)
+        return result_pages
+
+    def is_quick_enough(self, time_range):
+        """Iterate through pages, evaluate if their time
+            belongs to the time the user chose.
+            Return all pages that match the time.        
+
+        Args:
+          time_range: Int value representing minutes.
+        """
+        result_pages = []
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client=None))
+            if int(time_range) >= int(page_data["time"]):
+                result_pages.append(page_data)
+        return result_pages
+
+    def surprise_me(self):
+        """Returns a random page my using the random
+            module to select a randomized index from 
+            the list of all recipe pages.
+        """
+        storage_client = storage.Client()
+        blobs = list(
+            storage_client.list_blobs("nrjcontent",
+                                      prefix="pages/",
+                                      delimiter="/"))
+        index = random.randint(0, len(blobs) - 1)
+        blob = blobs[index]
+        page_data = json.loads(blob.download_as_bytes(client=None))
+        return page_data
+
+
+
+
+
     def create_copy_file(self, json_string):
         try:
             json_object = json.loads(json_string)
@@ -223,3 +283,4 @@ class Backend:
     Returns:
         Updates original file and deletes temp/ file, returns nothing.
     """
+>>>>>>> flaskr/backend.py
