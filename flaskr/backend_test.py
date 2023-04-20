@@ -9,6 +9,7 @@ from flaskr.user import User
 from google.cloud import storage
 import json
 import hashlib
+import random
 """Tests for Backend."""
 
 
@@ -25,7 +26,7 @@ def test_correct_signup():
     #bucket.blob.return_value = blob
     with patch('google.cloud.storage.Client', return_value=storage_client):
         backend = Backend(storage_client)
-        user = User('NewUserNameNeverUsedBefore')
+        user = User('NewUserNameNeverUsedBefore', 'default')
         backend.sign_up(user, 'wdjbvwebjh')
     assert blob.open.return_value.write.assert_called_once
 
@@ -42,10 +43,11 @@ def test_wrong_signup():
     blob.exists.return_value = True
     with patch('google.cloud.storage.Client', return_value=storage_client):
         backend = Backend(storage_client)
-        user = User('ExistingUser')
+        user = User('ExistingUser', 'default')
     assert not backend.sign_up(user, 'password')
 
 
+<<<<<<< flaskr/backend_test.py
 '''def test_correct_signin():
     """Tests signin function when user attempts to login 
         an account that already exists and the password is correct. 
@@ -55,6 +57,18 @@ def test_wrong_signup():
     test_pass = str(hashlib.blake2b(pas.encode()).hexdigest())
     test = Backend.sign_in(None, user, test_pass)
     assert test == True
+=======
+# TO - DO ----------------------------------------------------
+# def test_correct_signin():
+#     """Tests signin function when user attempts to login
+#         an account that already exists and the password is correct.
+#     """
+#     user = User('new')
+#     pas = 'prefix' + 'password'
+#     test_pass = str(hashlib.blake2b(pas.encode()).hexdigest())
+#     test = Backend.sign_in(None, user, test_pass)
+#     assert test == True
+>>>>>>> flaskr/backend_test.py
 
 
 def test_wrong_signin():
@@ -68,10 +82,11 @@ def test_wrong_signin():
     blob.exists.return_value = False
     with patch('google.cloud.storage.Client', return_value=storage_client):
         backend = Backend(storage_client)
-        user = User('NonExistingUser')
+        user = User('NonExistingUser', 'default')
     assert not backend.sign_up(user, 'password')
 
 
+<<<<<<< flaskr/backend_test.py
 def test_wrong_password_signin():
     """Tests signin function when user attempts to login 
         an account that already exists BUT the password is wrong. 
@@ -81,6 +96,18 @@ def test_wrong_password_signin():
     test_pass = str(hashlib.blake2b(pas.encode()).hexdigest())
     test = Backend.sign_in(None, user, test_pass)
     assert test == False'''
+=======
+# TO - DO ----------------------------------------------------
+# def test_wrong_password_signin():
+#     """Tests signin function when user attempts to login
+#         an account that already exists BUT the password is wrong.
+#     """
+#     user = User('new')
+#     pas = 'prefix' + 'notpassword'
+#     test_pass = str(hashlib.blake2b(pas.encode()).hexdigest())
+#     test = Backend.sign_in(None, user, test_pass)
+#     assert test == False
+>>>>>>> flaskr/backend_test.py
 
 
 def test_upload():
@@ -117,40 +144,86 @@ Uses:
 Returns:
     Our return statement is going to be whether or not our assertion passed or fail.
 """
+<<<<<<< flaskr/backend_test.py
 '''def test_get_all_pages_min():
     data = Backend.get_all_pages(None)
     assert len(data) > 0
 
 
+=======
+
+# TO - DO ----------------------------------------------------
+# def test_get_all_pages_min():
+#     data = Backend.get_all_pages(None)
+#     assert len(data) > 0
+>>>>>>> flaskr/backend_test.py
 """This tests the get_all_pages method retrieving at least one value.
 Run this test by running `pytest -v` in the /project directory.
 """
 
-
+# TO - DO ----------------------------------------------------
 # I believe this is technically not a unit test, but was unsure--
 # of how to setup the test since the pages are dynamic.
-def test_get_all_pages_content():
-    data = Backend.get_all_pages(None)
-    assert data[0]["name"] == "Bunny Dango"
-    assert data[1]["name"] == "Butterscotch Cinnamon Pie"
-
-
+# def test_get_all_pages_content():
+#     data = Backend.get_all_pages(None)
+#     assert data[0]["name"] == "Bunny Dango"
+#     assert data[1]["name"] == "Butterscotch Cinnamon Pie"
 """This tests the get_all_pages method retrieving all content in the right order.
 Run this test by running `pytest -v` in the /project directory.
 """
 
-
-def test_get_wiki_page():
-    page_data = Backend.get_wiki_page(None, 2)
-    assert page_data["id"] == '2'
-    assert page_data["name"] == "Rare Candy"
-
-
+# TO - DO -----------------------------------------------
+# def test_get_wiki_page():
+#     page_data = Backend.get_wiki_page(None, 2)
+#     assert page_data["id"] == '2'
+#     assert page_data["name"] == "Rare Candy"
 """This tests the get_wiki_page method retrieving the correct JSON object at specified id.
 Run this test by running `pytest -v` in the /project directory.
 """
 
+# TO - DO -----------------------------------------------
+# def test_get_wiki_page_none():
+#     page_data = Backend.get_wiki_page(None, -1)
+#     try:
+#         assert page_data["id"] == "This cannot be accessed"
+#     except TypeError:
+#         pass
+"""This tests the get_wiki_page method causing an exception if the 
+id it is trying to access does not exist.
+Run this test by running `pytest -v` in the /project directory.
+"""
 
+
+def test_get_game_categories_one_category():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"game": "Minecraft"}
+
+            result = backend.get_game_categories()
+
+    assert len(result) == 1
+
+
+""" This test checks if there is one category in our json fields 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+<<<<<<< flaskr/backend_test.py
 def test_get_wiki_page_none():
     page_data = Backend.get_wiki_page(None, -1)
     try:
@@ -168,10 +241,161 @@ def test_correct_get_preferences():
     """Tests get_preferences function when the user profiles 
         wants to access an user's saved preferences in their 
         user information. 
+=======
+def test_get_game_categories_no_category_field():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"cate": "pie"}
+
+            result = backend.get_game_categories()
+
+    assert len(result) == 0
+
+
+""" This test checks if there is no game field in our JSON 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_get_game_categories_no_category_entry():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"game": ""}
+
+            result = backend.get_game_categories()
+
+    assert len(result) == 0
+
+
+""" This test checks if our game field is empty 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_get_time_ranges_one_time_range():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"time": "45"}
+
+            result = backend.get_time_ranges()
+
+    assert len(result) == 1
+
+
+""" This test checks if there is one time range in our json fields 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_get_time_range_no_time_field():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"game": "Minecraft"}
+
+            result = backend.get_time_ranges()
+
+    assert len(result) == 0
+
+
+""" This test checks if there is no time field in our JSON 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_get_time_ranges_no_time_entry():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"time": ""}
+
+            result = backend.get_time_ranges()
+
+    assert len(result) == 0
+
+
+""" This test checks if our time field is empty 
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_correct_belongs_to_game():
+    """Tests belongs_to_game function when the user 
+        searches for a game title. 
+>>>>>>> flaskr/backend_test.py
     """
     storage_client = MagicMock()
     bucket = MagicMock()
     blob = MagicMock()
+<<<<<<< flaskr/backend_test.py
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = True
     bucket.blob.return_value = blob
@@ -181,11 +405,21 @@ def test_correct_get_preferences():
     }
 
     expected = []
+=======
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    storage_client.list_blobs.return_value = [blob]
+
+    storage_client.bucket.return_value = bucket
+>>>>>>> flaskr/backend_test.py
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
 
+<<<<<<< flaskr/backend_test.py
             mock_json.return_value = {"password": "password", "preferences": []}
             user = User('new')
             test = backend.get_preferences(user)
@@ -196,10 +430,22 @@ def test_wrong_get_preferences():
     """Tests get_preferences function when the user profiles 
         wants to access an user's saved preferences in their 
         user information BUT the user blob does not exist.
+=======
+            mock_json.return_value = {"game": "zelda"}
+            test = backend.belongs_to_game(["zelda"])
+    assert len(test) == 1
+
+
+def test_belongs_to_game_not_found():
+    """Tests belongs_to_game function when the user 
+        searches for a game title but no recipe
+        matches the game.  
+>>>>>>> flaskr/backend_test.py
     """
     storage_client = MagicMock()
     bucket = MagicMock()
     blob = MagicMock()
+<<<<<<< flaskr/backend_test.py
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = False
     bucket.blob.return_value = blob
@@ -233,11 +479,21 @@ def test_right_store_preferences():
         "password": "password",
         "preferences": []
     }
+=======
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    storage_client.list_blobs.return_value = [blob]
+
+    storage_client.bucket.return_value = bucket
+>>>>>>> flaskr/backend_test.py
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
 
+<<<<<<< flaskr/backend_test.py
             mock_json.return_value = {"password": "password", "preferences": []}
             user = User('new')
             backend.store_preferences(user, ["category1"])
@@ -248,10 +504,22 @@ def test_store_preferences_nonexisting_user():
     """Tests store_preferences function when the user marked
     new preferences and we need to store these new categories
     into their user information BUT the user blob does not exist.
+=======
+            mock_json.return_value = {"game": "not zelda"}
+            test = backend.belongs_to_game(["zelda"])
+
+    assert len(test) == 0
+
+
+def test_correct_is_quick_enough():
+    """Tests is_quick_enough function when the user 
+        searches for a time range  
+>>>>>>> flaskr/backend_test.py
     """
     storage_client = MagicMock()
     bucket = MagicMock()
     blob = MagicMock()
+<<<<<<< flaskr/backend_test.py
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = False
     bucket.blob.return_value = blob
@@ -288,11 +556,24 @@ def test_store_preferences_old_user():
         "password": "password",
         "preferences": []
     }
+=======
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    storage_client.list_blobs.return_value = [blob]
+
+    storage_client.bucket.return_value = bucket
+
+    # Test it later
+    blob.download_as_bytes.return_value = {"time": "60"}
+>>>>>>> flaskr/backend_test.py
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
 
+<<<<<<< flaskr/backend_test.py
             mock_json.return_value = {"password": "password"}
             user = User('new')
             backend.store_preferences(user, ["category1"])
@@ -303,10 +584,22 @@ def test_right_reset_preferences():
     """
         Tests the reset_preference function when they 
         select reset preferences in their profile.
+=======
+            mock_json.return_value = {"time": "60"}
+            test = backend.is_quick_enough("60")
+    assert len(test) == 1
+
+
+def test_correct_is_not_quick_enough():
+    """Tests is_quick_enough function when the user 
+        searches for a time range but no recipe
+        matches the range.  
+>>>>>>> flaskr/backend_test.py
     """
     storage_client = MagicMock()
     bucket = MagicMock()
     blob = MagicMock()
+<<<<<<< flaskr/backend_test.py
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = True
     bucket.blob.return_value = blob
@@ -314,11 +607,24 @@ def test_right_reset_preferences():
         "password": "password",
         "preferences": ["category1"]
     }
+=======
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    storage_client.list_blobs.return_value = [blob]
+
+    storage_client.bucket.return_value = bucket
+
+    # Test it later
+    blob.download_as_bytes.return_value = {"time": "90"}
+>>>>>>> flaskr/backend_test.py
 
     with patch('google.cloud.storage.Client', return_value=storage_client):
         with patch('json.loads', new_callable=MagicMock) as mock_json:
             backend = Backend(storage_client)
 
+<<<<<<< flaskr/backend_test.py
             mock_json.return_value = {
                 "password": "password",
                 "preferences": ["category1"]
@@ -338,10 +644,21 @@ def test_wrong_reset_preferences():
         key-value pair.
 
         (User was made before this feature was implemented)
+=======
+            mock_json.return_value = {"time": "90"}
+            test = backend.is_quick_enough("60")
+    assert len(test) == 0
+
+
+def test_surprise_me():
+    """Tests surprise_me function when the user 
+        wants to receieve a random recipe to make. 
+>>>>>>> flaskr/backend_test.py
     """
     storage_client = MagicMock()
     bucket = MagicMock()
     blob = MagicMock()
+<<<<<<< flaskr/backend_test.py
     storage_client.bucket.return_value = bucket
     blob.exists.return_value = True
     bucket.blob.return_value = blob
@@ -360,3 +677,36 @@ def test_wrong_reset_preferences():
             test_preference_contents = backend.get_preferences(user)
     assert blob.open.return_value.write.assert_called_once
     assert len(test_preference_contents) == 0
+=======
+    blob1 = MagicMock()
+    blob2 = MagicMock()
+
+    storage_client.bucket.return_value = bucket
+    bucket.blob.return_value = blob
+
+    bucket.blob1.return_value = blob1
+    bucket.blob2.return_value = blob2
+
+    storage_client.list_blobs.return_value = [blob, blob1, blob2]
+
+    storage_client.bucket.return_value = bucket
+
+    # Test it later
+    blob.download_as_bytes.return_value = {"id": "0"}
+    blob1.download_as_bytes.return_value = {"id": "1"}
+    blob2.download_as_bytes.return_value = {"id": "2"}
+
+    result = []
+    for i in range(10):
+        with patch('google.cloud.storage.Client', return_value=storage_client):
+            with patch('json.loads', new_callable=MagicMock) as mock_json:
+                backend = Backend(storage_client)
+                i = random.randint(-1, 2)
+                mock_json.return_value = {"id": str(i)}
+                test = backend.surprise_me()
+                temp = int(test["id"])
+                result.append(temp)
+    assert 0 in result and 1 in result and 2 in result
+>>>>>>> flaskr/backend_test.py
+
+

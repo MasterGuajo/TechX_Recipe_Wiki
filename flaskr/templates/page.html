@@ -9,6 +9,15 @@
         <h2 class="dishname">{{page_data["name"]}}</h2>
         <h3 class="dishgame">{{page_data["game"]}}</h3>
         <h4 class="dishcate">{{page_data["cate"]}}</h4>
+        
+        <br><form method='POST' action="/check_page" enctype='multipart/form-data'>
+            <label for="send_edit"> Enter raw json data:</label>
+            <input id="send_edit" name="send_edit" type='text'> <br>
+            <label for="approve_overwrite"> Enter GCS blob name to use to overwrite original:</label>
+            <input id="approve_overwrite" name="approve_overwrite" type='text'> <br>
+            <input type="submit" value="Submit"> <br> <br>
+        </form>
+
         <p>
             {{page_data["desc"]}}
             <br>
@@ -31,8 +40,46 @@
     </div>
 </div>
 
+<div class="editing">
+
+    {% if editing %}
+    
+        <h2>Editing Mode</h2>
+        
+        <form method='POST' enctype='multipart/form-data'>
+            <textarea id="freeform" name="freeform" rows="20" cols="100">
+            {
+               {{ page_data }}
+                    
+            }
+            </textarea>
+            <input type='submit' name='edits' value='Submit Edits'>
+        </form>
+        
+    {% else %}
+        <form method='POST' enctype='multipart/form-data'>
+            <input type='submit' name='suggest' value='Suggest Edits'>
+        </form>
+    {% endif%}
+    
+    <p>{{ message }}</p>
+
+</div>
 
 </body>
 
 </html>
+
+<style>
+    .editing {
+        float: right;
+        min-width: 60%;
+    }
+
+    .main_div {
+        float: left;
+        width: 40%;
+    }
+</style>
+
 {% endblock %}

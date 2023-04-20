@@ -9,6 +9,7 @@ import pytest
 from flaskr.user import User
 import io
 from io import BytesIO
+# from flask.ext.testing import TestCase
 """Tests for pages."""
 
 
@@ -58,34 +59,30 @@ def test_aliases(client):
 """This tests the page aliases for the homepage (/, /home, /index).
 Run this test by running `pytest -v` in the /project directory.
 """
-'''
-def test_pages(client):
-    resp = client.get("/pages")
-    assert resp.status_code == 200
-    assert b'<div id="pages_main_div" class="main_div">' in resp.data
 
-
+# TO - DO ----------------------------------------------------
+# def test_pages(client):
+#     resp = client.get("/pages")
+#     assert resp.status_code == 200
+#     assert b'<div id="pages_main_div" class="main_div">' in resp.data
 """This tests the page loading of the wiki pages overview template.
 Run this test by running `pytest -v` in the /project directory.
 """
 
-
-def test_about(client):
-    resp = client.get("/about")
-    assert resp.status_code == 200
-    assert b'<div id="about_main_div" class="main_div">' in resp.data
-
-
+# TO - DO ----------------------------------------------------
+# def test_about(client):
+#     resp = client.get("/about")
+#     assert resp.status_code == 200
+#     assert b'<div id="about_main_div" class="main_div">' in resp.data
 """This tests the page loading of the about page template.
 Run this test by running `pytest -v` in the /project directory.
 """
 
-
-def test_page(client):
-    resp = client.get("/pages/0")
-    assert resp.status_code == 200
-    assert b'<div id="page_main_div" class="main_div">' in resp.data
-'''
+# TO - DO ----------------------------------------------------
+# def test_page(client):
+#     resp = client.get("/pages/0")
+#     assert resp.status_code == 200
+#     assert b'<div id="page_main_div" class="main_div">' in resp.data
 """This tests the page loading of each individual recipe page's template.
 Run this test by running `pytest -v` in the /project directory.
 """
@@ -93,7 +90,7 @@ Run this test by running `pytest -v` in the /project directory.
 
 @pytest.fixture
 def user_example():
-    user = User('testing')
+    user = User('testing', "default")
     return user
 
 
@@ -176,7 +173,7 @@ def test_logout(app, user_example):
 def test_upload_no_file(app):
     app.test_client_class = FlaskLoginClient
 
-    user = User("testing@gmail.com")
+    user = User("testing@gmail.com", "default")
 
     with patch('flaskr.backend.Backend.upload'):
 
@@ -208,7 +205,7 @@ Returns:
 def test_upload_invalid_file(app):
     app.test_client_class = FlaskLoginClient
 
-    user = User("testing@gmail.com")
+    user = User("testing@gmail.com", "default")
 
     with patch('flaskr.backend.Backend.upload'):
 
@@ -240,7 +237,7 @@ Returns:
 def test_upload_successful(app):
     app.test_client_class = FlaskLoginClient
 
-    user = User("testing@gmail.com")
+    user = User("testing@gmail.com", "default")
 
     with patch('flaskr.backend.Backend.upload'):
 
@@ -266,4 +263,49 @@ Args:
 
 Returns:
     Returns True or False depending on if the assertion was succesfull or not
+"""
+# TO - DO
+# def test_suggest_edits_valid_user(app):
+#     app.test_client_class = FlaskLoginClient
+
+#     user = User("testing@gmail.com")
+
+#     with patch('flaskr.backend.Backend.upload'):
+
+#         with app.test_client(user=user) as client:
+
+#             data = 'suggest'
+
+#             response = client.post("/pages/6", data=data)
+#             print(response.data)
+#             assert "<h2>Editing Mode</h2>" in response.text
+""" Tests that edit mode is available if a user is logged in
+We patch in a user with app.test_client() and then make a client.post in order to test
+
+Args:
+    Takes in an instance of app
+Returns:
+    Returns an assert statement finding if a certain block of text was found
+"""
+
+# TO - DO
+# def test_suggest_edits_invalid_user(app):
+#     app.test_client_class = FlaskLoginClient
+
+#     with patch('flaskr.backend.Backend.upload'):
+
+#         with app.test_client() as client:
+
+#             data = 'Suggest Edits'
+
+#             response = client.post("/pages/6", data=data)
+#             print(response.data)
+#             assert "<p>Please log in before submitting edits</p>" in response.text
+""" Tests that if a user is not logged it will not let them edit any recipes
+We don't create a user and then create a post method to obtain text.
+
+Args:
+    Takes in an instance of app
+Returns:
+    Returns an assert statement finding if a certain block of text was found
 """
