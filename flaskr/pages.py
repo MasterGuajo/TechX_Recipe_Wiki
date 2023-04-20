@@ -65,26 +65,56 @@ def make_endpoints(app):
         data with Backend function call. Changes param if user is logged in.
     """
 
-    @app.route("/pages/<int:page_id>")
+    @app.route("/pages/<int:page_id>", methods=['GET', 'POST'])
     def show_page(page_id):
         if current_user.is_authenticated:
+
+            if request.method == "POST":
+
+                editing = True
+
+                if "edits" in request.form:
+                    # You get the info from the text both with this
+                    #
+                    # message = request.form.get('freeform')
+
+                    # Now we'd have to submit the value of the form
+
+                    # Get out of editing mode
+                    editing = False
+                    # Message
+                    message = "Edits are being processed"
+
+                    return render_template("page.html",
+                                           page_data=Backend.get_wiki_page(
+                                               None, page_id),
+                                           name=current_user.username,
+                                           editing=editing,
+                                           message=message)
+            else:
+                editing = False
+
             return render_template("page.html",
                                    page_data=Backend.get_wiki_page(
                                        None, page_id),
-                                   name=current_user.username)
+                                   name=current_user.username,
+                                   editing=editing)
         else:
+            message = "Please log in before submitting edits"
             return render_template("page.html",
                                    page_data=Backend.get_wiki_page(
-                                       None, page_id))
+                                       None, page_id),
+                                   message=message)
 
-    """Endpoint for specific wiki page.
+    """Endpoint for specific wiki page. Contains POST Method
 
     Parametrized endpoint for specific wiki page, loads page matching an ID with the jinja 
-    template (page.html). Calls Backend function for loading the matching data.
+    template (page.html) and variables that determine whether a user is an editing mode.
+    Calls Backend function for loading the matching data and can return HTML form info
 
     Returns:
-        A jinja render_template call with the corresponding template - page.html. Loads
-        data with Backend function call. Changes param if user is logged in.
+        A jinja render_template call with the corresponding template - page.html, along with variables.
+        Loads data with Backend function call. Changes param if user is logged in.
     """
 
     @app.route("/about", methods=['GET'])
