@@ -331,6 +331,51 @@ def make_endpoints(app):
         logout_user()
         return redirect('/home')
 
+<<<<<<< flaskr/pages.py
+    @app.route("/admin", methods=["GET", "POST"])
+    def admin():
+        """Display original and suggested json files.
+        Selecting approve or reject buttons will return the
+        index of said files in order to complete tasks with Rodrigo's
+        backend functions.
+
+        Args:
+          button_clicked: approve or reject
+        """
+        backend = Backend(storage.Client())
+        lst1 = backend.get_all_pages()
+        #SHOULD PULL Original pages and edited pages instead
+
+        if request.method == "POST":
+            button_clicked = request.form.get('button_clicked')
+
+            if button_clicked.startswith('approve_'):
+                index = int(button_clicked.split('_')[1])
+                # Use backend functions to complete task
+
+                return render_template("admin.html",
+                                       edited_pages=lst1,
+                                       og_pages=lst1,
+                                       len=0)
+
+            elif button_clicked.startswith('reject_'):
+                index = int(button_clicked.split('_')[1])
+                # Use backend functions to complete task
+
+                return render_template("admin.html",
+                                       edited_pages=lst1,
+                                       og_pages=lst1,
+                                       len=0)
+        else:
+            return render_template("admin.html",
+                                   edited_pages=lst1,
+                                   og_pages=lst1,
+                                   len=len(lst1))
+
+
+
+
+
     @app.route("/search", methods=['POST', 'GET'])
     @app.route("/search")
     def search():
@@ -354,3 +399,4 @@ def make_endpoints(app):
         return render_template("search.html",
                                game_categories=game_categories,
                                time_ranges=time_ranges)
+>>>>>>> flaskr/pages.py
