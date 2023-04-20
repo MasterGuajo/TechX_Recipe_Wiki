@@ -1,0 +1,18 @@
+{% extends "navbar.html" %}
+
+{% block content %}
+<body>
+    <div id="home_main_div" class="main_div">
+        <p class="home_desc">
+            {% if current_user.perms == "default" %}
+            You do not have access to this page.
+            {% endif %}
+
+            {% if current_user.perms == "admin" %}
+            Hello admin!
+            **Place the html for the admin stuff here!!**
+            {% endif %}
+        </p>
+</body>
+
+{% endblock %}
