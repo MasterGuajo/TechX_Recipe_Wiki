@@ -10,6 +10,8 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 import base64
 import io
 
+import json
+
 # Extension that the user is allowed to upload
 #ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'}
 ALLOWED_EXTENSIONS = {'json'}
@@ -26,7 +28,10 @@ def make_endpoints(app):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User(user_id)
+        if user_id in open('./flaskr/admins.txt').read():
+            return User(user_id, "admin")
+        else:
+            return User(user_id, "default")
 
     @app.route("/")
     @app.route("/index")
@@ -115,6 +120,36 @@ def make_endpoints(app):
     Returns:
         A jinja render_template call with the corresponding template - page.html, along with variables.
         Loads data with Backend function call. Changes param if user is logged in.
+    """
+
+    @app.route("/check_page",  methods=['GET', 'POST'])
+    def check_page_form():
+        if request.method == 'POST':
+            if request.form["send_edit"]:
+                Backend.create_copy_file(None, request.form["send_edit"])
+            if request.form["approve_overwrite"]:
+                Backend.overwrite_original_file(None, request.form["approve_overwrite"])
+        return redirect('/pages')
+    """ Checks a page for any edits being pushed or approved.
+
+    If a POST method is used with this route, the route will check the forms being submitted for the 'send_edit' and 'approve_overwrite'
+    names in the request.form. This will call their appropriate backend methods, to be used in conjunction with the editing interface and admin
+    approvals. I've left an example of the use cases in the 'page.html' template, please let me know if you need any help using these!
+
+    Args:
+        Using POST we obtain a form request to be checked.
+    
+    Uses:
+        <form method='POST' action="/check_page" enctype='multipart/form-data'>
+            <label for="send_edit"> Enter raw json data:</label>
+            <input id="send_edit" name="send_edit" type='text'>
+            <label for="approve_overwrite"> Enter GCS blob name to use to overwrite original:</label>
+            <input id="approve_overwrite" name="approve_overwrite" type='text'>
+            <input type="submit" value="Submit">
+        </form>
+
+    Returns:
+        A redirect to pages, but can be anything else.
     """
 
     @app.route("/about", methods=['GET'])
@@ -241,7 +276,12 @@ def make_endpoints(app):
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        flask_user = User(user_name)
+        
+        if user_name in open('./flaskr/admins.txt').read():
+            flask_user = User(user_name, "admin")
+        else:
+            flask_user = User(user_name, "default")
+            
         if backend.sign_up(flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
@@ -270,7 +310,12 @@ def make_endpoints(app):
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        flask_user = User(user_name)
+
+        if user_name in open('./flaskr/admins.txt').read():
+            flask_user = User(user_name, "admin")
+        else:
+            flask_user = User(user_name, "default")
+            
         if Backend.sign_in(None, flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
@@ -286,6 +331,7 @@ def make_endpoints(app):
         logout_user()
         return redirect('/home')
 
+<<<<<<< flaskr/pages.py
     @app.route("/admin", methods=["GET", "POST"])
     def admin():
         """Display original and suggested json files.
@@ -325,3 +371,32 @@ def make_endpoints(app):
                                    edited_pages=lst1,
                                    og_pages=lst1,
                                    len=len(lst1))
+
+
+
+
+
+    @app.route("/search", methods=['POST', 'GET'])
+    @app.route("/search")
+    def search():
+
+        game_categories = Backend.get_game_categories(None)
+        time_ranges = Backend.get_time_ranges(None)
+
+        if request.method == "POST":
+
+            # Shows you current values
+            selected_games = request.form.getlist('game_chosen')
+            selected_times = request.form.get('time_chosen')
+
+            # Return recipes variable
+            return render_template("search.html",
+                                   game_categories=game_categories,
+                                   time_ranges=time_ranges,
+                                   selected_games=selected_games,
+                                   selected_times=selected_times)
+
+        return render_template("search.html",
+                               game_categories=game_categories,
+                               time_ranges=time_ranges)
+>>>>>>> flaskr/pages.py
