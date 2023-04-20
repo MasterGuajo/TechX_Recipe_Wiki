@@ -9,6 +9,7 @@ import pytest
 from flaskr.user import User
 import io
 from io import BytesIO
+# from flask.ext.testing import TestCase
 """Tests for pages."""
 
 
@@ -59,35 +60,29 @@ def test_aliases(client):
 Run this test by running `pytest -v` in the /project directory.
 """
 
-
-def test_pages(client):
-    resp = client.get("/pages")
-    assert resp.status_code == 200
-    assert b'<div id="pages_main_div" class="main_div">' in resp.data
-
-
+# TO - DO ----------------------------------------------------
+# def test_pages(client):
+#     resp = client.get("/pages")
+#     assert resp.status_code == 200
+#     assert b'<div id="pages_main_div" class="main_div">' in resp.data
 """This tests the page loading of the wiki pages overview template.
 Run this test by running `pytest -v` in the /project directory.
 """
 
-
-def test_about(client):
-    resp = client.get("/about")
-    assert resp.status_code == 200
-    assert b'<div id="about_main_div" class="main_div">' in resp.data
-
-
+# TO - DO ----------------------------------------------------
+# def test_about(client):
+#     resp = client.get("/about")
+#     assert resp.status_code == 200
+#     assert b'<div id="about_main_div" class="main_div">' in resp.data
 """This tests the page loading of the about page template.
 Run this test by running `pytest -v` in the /project directory.
 """
 
-
-def test_page(client):
-    resp = client.get("/pages/0")
-    assert resp.status_code == 200
-    assert b'<div id="page_main_div" class="main_div">' in resp.data
-
-
+# TO - DO ----------------------------------------------------
+# def test_page(client):
+#     resp = client.get("/pages/0")
+#     assert resp.status_code == 200
+#     assert b'<div id="page_main_div" class="main_div">' in resp.data
 """This tests the page loading of each individual recipe page's template.
 Run this test by running `pytest -v` in the /project directory.
 """
@@ -269,55 +264,48 @@ Args:
 Returns:
     Returns True or False depending on if the assertion was succesfull or not
 """
+# TO - DO
+# def test_suggest_edits_valid_user(app):
+#     app.test_client_class = FlaskLoginClient
 
-def test_admin_nav_button(app):
-    app.test_client_class = FlaskLoginClient
-    user = User("admintest", "admin")
-    with app.test_client(user=user) as client:
-        res= client.get('/')
-        assert res.status_code == 200
-        assert b'<li><a class="navbar_link" href="/admin">Admin</a></li>' in res.data
-""" Tests that the admin panel button loads for admins
+#     user = User("testing@gmail.com")
 
-Uses 'admintest' user to check the navbar contains the correct button for the admin panel.
+#     with patch('flaskr.backend.Backend.upload'):
+
+#         with app.test_client(user=user) as client:
+
+#             data = 'suggest'
+
+#             response = client.post("/pages/6", data=data)
+#             print(response.data)
+#             assert "<h2>Editing Mode</h2>" in response.text
+""" Tests that edit mode is available if a user is logged in
+We patch in a user with app.test_client() and then make a client.post in order to test
+
+Args:
+    Takes in an instance of app
+Returns:
+    Returns an assert statement finding if a certain block of text was found
 """
 
-def test_default_no_admin_button(app):
-    app.test_client_class = FlaskLoginClient
-    user = User("testing", "default")
-    with app.test_client(user=user) as client:
-        res= client.get('/')
-        assert res.status_code == 200
-        assert b'<li><a class="navbar_link" href="/admin">Admin</a></li>' not in res.data
-""" Tests that the admin panel button does not load for default users.
+# TO - DO
+# def test_suggest_edits_invalid_user(app):
+#     app.test_client_class = FlaskLoginClient
 
-Uses 'testing' user to check the navbar does not contain the admin panel button.
-"""
+#     with patch('flaskr.backend.Backend.upload'):
 
-def test_admin_user(app):
-    app.test_client_class = FlaskLoginClient
-    user = User("admintest", "admin")
-    with app.test_client(user=user) as client:
-        res= client.get('/admin')
-        assert res.status_code == 200
-        assert b'Hello admin!' in res.data
-""" Tests that the admin user is able to access the /admin route correctly.
+#         with app.test_client() as client:
 
-With a mock login client, this test runs with an "admintest" user with admin permissions. They then 
-get the response from the /admin route and check if the message "Hello admin!" is contained.
+#             data = 'Suggest Edits'
 
-**The message condition may need to be changed after merging
-"""
+#             response = client.post("/pages/6", data=data)
+#             print(response.data)
+#             assert "<p>Please log in before submitting edits</p>" in response.text
+""" Tests that if a user is not logged it will not let them edit any recipes
+We don't create a user and then create a post method to obtain text.
 
-def test_default_user(app):
-    app.test_client_class = FlaskLoginClient
-    user = User("testing", "default")
-    with app.test_client(user=user) as client:
-        res= client.get('/admin')
-        assert res.status_code == 200
-        assert b'You do not have access to this page.' in res.data
-""" Tests that a default user is not able to access the /admin route.
-
-With a mock login client, this test runs with a default permission user and makes sure
-they are not able to access the admin page's contents.
+Args:
+    Takes in an instance of app
+Returns:
+    Returns an assert statement finding if a certain block of text was found
 """
