@@ -26,7 +26,10 @@ def make_endpoints(app):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User(user_id)
+        if user_id in open('./flaskr/admins.txt').read():
+            return User(user_id, "admin")
+        else:
+            return User(user_id, "default")
 
     @app.route("/")
     @app.route("/index")
@@ -65,26 +68,56 @@ def make_endpoints(app):
         data with Backend function call. Changes param if user is logged in.
     """
 
-    @app.route("/pages/<int:page_id>")
+    @app.route("/pages/<int:page_id>", methods=['GET', 'POST'])
     def show_page(page_id):
         if current_user.is_authenticated:
+
+            if request.method == "POST":
+
+                editing = True
+
+                if "edits" in request.form:
+                    # You get the info from the text both with this
+                    #
+                    # message = request.form.get('freeform')
+
+                    # Now we'd have to submit the value of the form
+
+                    # Get out of editing mode
+                    editing = False
+                    # Message
+                    message = "Edits are being processed"
+
+                    return render_template("page.html",
+                                           page_data=Backend.get_wiki_page(
+                                               None, page_id),
+                                           name=current_user.username,
+                                           editing=editing,
+                                           message=message)
+            else:
+                editing = False
+
             return render_template("page.html",
                                    page_data=Backend.get_wiki_page(
                                        None, page_id),
-                                   name=current_user.username)
+                                   name=current_user.username,
+                                   editing=editing)
         else:
+            message = "Please log in before submitting edits"
             return render_template("page.html",
                                    page_data=Backend.get_wiki_page(
-                                       None, page_id))
+                                       None, page_id),
+                                   message=message)
 
-    """Endpoint for specific wiki page.
+    """Endpoint for specific wiki page. Contains POST Method
 
     Parametrized endpoint for specific wiki page, loads page matching an ID with the jinja 
-    template (page.html). Calls Backend function for loading the matching data.
+    template (page.html) and variables that determine whether a user is an editing mode.
+    Calls Backend function for loading the matching data and can return HTML form info
 
     Returns:
-        A jinja render_template call with the corresponding template - page.html. Loads
-        data with Backend function call. Changes param if user is logged in.
+        A jinja render_template call with the corresponding template - page.html, along with variables.
+        Loads data with Backend function call. Changes param if user is logged in.
     """
 
     @app.route("/check_page",  methods=['GET', 'POST'])
@@ -241,7 +274,12 @@ def make_endpoints(app):
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        flask_user = User(user_name)
+        
+        if user_name in open('./flaskr/admins.txt').read():
+            flask_user = User(user_name, "admin")
+        else:
+            flask_user = User(user_name, "default")
+            
         if backend.sign_up(flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
@@ -270,7 +308,12 @@ def make_endpoints(app):
         user_name = request.form["Username"]
         password = "prefix" + request.form["Password"]
         hash = hashlib.blake2b(password.encode()).hexdigest()
-        flask_user = User(user_name)
+
+        if user_name in open('./flaskr/admins.txt').read():
+            flask_user = User(user_name, "admin")
+        else:
+            flask_user = User(user_name, "default")
+            
         if Backend.sign_in(None, flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
@@ -286,4 +329,15 @@ def make_endpoints(app):
         logout_user()
         return redirect('/home')
 
-  
+
+    @app.route("/admin")
+    def admin():
+        backend = Backend(storage.Client())
+
+        return render_template("admin.html")
+
+    """
+    A dummy route for the admin page. Uses ifs in the jinja templates to verify admin status.
+    Add your code for the admin page to this method.
+    """
+        
