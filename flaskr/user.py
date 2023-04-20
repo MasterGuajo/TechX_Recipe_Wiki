@@ -28,3 +28,12 @@ class User(UserMixin):
           likes_spam: Defines if instance exhibits this preference.
         """
         return self.username
+
+    def is_admin(self):
+        return True if self.privileges == "admin" else False
+
+    class Role():
+        name = "default"        
+
+    class UserRole():
+        id = 0

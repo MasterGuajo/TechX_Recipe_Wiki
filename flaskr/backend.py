@@ -101,7 +101,8 @@ class Backend:
         #storage_client = storage.Client()
         bucket = self.storage_client.bucket("userpass")
         blob = bucket.blob(new_user.username)
-        info = {"password": password}
+        info = {"password": password, "privileges": "default"}
+
         if blob.exists():
             return False
         with blob.open("w") as f:
@@ -133,7 +134,6 @@ class Backend:
             return False
 
     def get_image(self, blob_name):
-
         storage_client = storage.Client()
         bucket = storage_client.bucket("nrjcontent")
         # bucket = storage_client.bucket("nrjcontent/images/authors")
@@ -154,4 +154,72 @@ class Backend:
         Ex: 'image.png'
     Returns:
         The Bytes of the image with base64 encoding.
+    """
+
+    def create_copy_file(self, json_string):
+        try:
+            json_object = json.loads(json_string)
+        except ValueError:
+            return #Bad json input passed
+
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("nrjcontent")
+
+        #creation of unique temp name for new blob
+        counter = 1
+        new_blob_name = None
+        while True:
+            new_blob_name = json_object["blobname"][:-5] + "(" + str(counter) + ")" + json_object["blobname"][-5:]
+            if storage.Blob(bucket=bucket, name="pages/temp/"+new_blob_name).exists(storage_client):
+                counter += 1
+                continue
+            else:
+                break
+
+        blob = bucket.blob("pages/temp/"+new_blob_name)
+        blob.upload_from_string(json.dumps(json_object))
+        return blob.name
+
+    """ Creates a blob in temp folder from json object
+
+    Gets a json string as a parameter, and encodes it. Creates a unique filename for the new blob
+    to be stored in the temp/ folder and uploads that json data into it. To be used with forms in
+    /check_page route, see pages.py.
+
+    Args:
+        json_string: a string containing a json object to be encoded
+        Ex: '{ "test":"test", "test2":"test2" }'
+    Returns:
+        Creates new object in temp/ folder from json data, returns nothing.
+    """
+
+    def overwrite_original_file(self, old_blob_name):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("nrjcontent")
+
+        if old_blob_name[-5:] != ".json" or old_blob_name[-6] != ")" or old_blob_name[-8] != "(":
+            return #Bad input string
+
+        new_blob_name = old_blob_name[:-8] + old_blob_name[-5:]
+            
+        destination = bucket.blob("pages/" + new_blob_name)
+        sources = [bucket.blob("pages/temp/" + old_blob_name)]
+        destination.compose(sources)
+        sources[0].delete()
+        return
+
+    """ Gets a blob from temp/ folder and overwrites blob with same name in pages/ with it.
+
+    Gets a string with a blob name as a param, gets the blob with that name in temp/ folder. 
+    Then overwrites original file in pages/ with that temp/ blob removing the version number [(2)].
+    To be used with the admin approvals and update the original pages of the wiki. To be used with forms in
+    /check_page route, see pages.py.
+
+    Args:
+        old_blob_name: string with input of the blob name
+        MUST be in format of "whatevername(2).json" -- anything before the parentheses
+        doesn't matter, but it must end with "(*number*).json"
+        Ex: 'pages_test_file(1).json'
+    Returns:
+        Updates original file and deletes temp/ file, returns nothing.
     """
