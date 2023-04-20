@@ -223,3 +223,32 @@ class Backend:
     Returns:
         Updates original file and deletes temp/ file, returns nothing.
     """
+
+    def list_temp_files(self):
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/temp",
+                                          delimiter="/")
+        all_pages_data = []
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client=None))
+            all_pages_data.append(page_data)
+        return all_pages_data
+
+    """ Lists all files from temp folder
+
+    Returns:
+        Returns a list of json objects from the temp folder
+    """
+
+    def delete_temp_file(self, blob_to_delete):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("nrjcontent")
+        bucket.blob("pages/temp/" + blob_to_delete).delete()
+        return True
+
+    """ Deletes a file in the temp folder with the name of the parameter
+
+    Returns:
+        True boolean for testing    
+    """
