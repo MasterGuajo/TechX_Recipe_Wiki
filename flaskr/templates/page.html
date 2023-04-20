@@ -31,8 +31,46 @@
     </div>
 </div>
 
+<div class="editing">
+
+    {% if editing %}
+    
+        <h2>Editing Mode</h2>
+        
+        <form method='POST' enctype='multipart/form-data'>
+            <textarea id="freeform" name="freeform" rows="20" cols="100">
+            {
+               {{ page_data }}
+                    
+            }
+            </textarea>
+            <input type='submit' name='edits' value='Submit Edits'>
+        </form>
+        
+    {% else %}
+        <form method='POST' enctype='multipart/form-data'>
+            <input type='submit' name='suggest' value='Suggest Edits'>
+        </form>
+    {% endif%}
+    
+    <p>{{ message }}</p>
+
+</div>
 
 </body>
 
 </html>
+
+<style>
+    .editing {
+        float: right;
+        min-width: 60%;
+    }
+
+    .main_div {
+        float: left;
+        width: 40%;
+    }
+</style>
+
 {% endblock %}
