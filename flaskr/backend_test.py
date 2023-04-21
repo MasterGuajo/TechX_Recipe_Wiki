@@ -162,37 +162,7 @@ Run this test by running `pytest -v` in the /project directory.
 """
 
 
-def test_get_game_categories_one_category():
-
-    test_blob = MagicMock()
-    test_bucket = MagicMock()
-    test_storage_client = MagicMock()
-
-    test_storage_client.list_blobs.return_value = [test_blob]
-
-    test_storage_client.bucket.return_value = test_bucket
-
-    with patch('google.cloud.storage.Client', return_value=test_storage_client):
-
-        with patch('json.loads', new_callable=MagicMock) as mock_json:
-
-            backend = Backend(test_storage_client)
-
-            mock_json.return_value = {"game": "Minecraft"}
-
-            result = backend.get_game_categories()
-
-    assert len(result) == 1
-
-
-""" This test checks if there is one category in our json fields 
-We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
-We also patch in our storage client and a json load
-"""
-
-
-def test_get_game_categories_no_category_field():
-
+def test_get_recipe_category_one_category():
     test_blob = MagicMock()
     test_bucket = MagicMock()
     test_storage_client = MagicMock()
@@ -209,76 +179,170 @@ def test_get_game_categories_no_category_field():
 
             mock_json.return_value = {"cate": "pie"}
 
-            result = backend.get_game_categories()
-
-    assert len(result) == 0
-
-
-""" This test checks if there is no game field in our JSON 
-We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
-We also patch in our storage client and a json load
-"""
-
-
-def test_get_game_categories_no_category_entry():
-
-    test_blob = MagicMock()
-    test_bucket = MagicMock()
-    test_storage_client = MagicMock()
-
-    test_storage_client.list_blobs.return_value = [test_blob]
-
-    test_storage_client.bucket.return_value = test_bucket
-
-    with patch('google.cloud.storage.Client', return_value=test_storage_client):
-
-        with patch('json.loads', new_callable=MagicMock) as mock_json:
-
-            backend = Backend(test_storage_client)
-
-            mock_json.return_value = {"game": ""}
-
-            result = backend.get_game_categories()
-
-    assert len(result) == 0
-
-
-""" This test checks if our game field is empty 
-We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
-We also patch in our storage client and a json load
-"""
-
-
-def test_get_time_ranges_one_time_range():
-
-    test_blob = MagicMock()
-    test_bucket = MagicMock()
-    test_storage_client = MagicMock()
-
-    test_storage_client.list_blobs.return_value = [test_blob]
-
-    test_storage_client.bucket.return_value = test_bucket
-
-    with patch('google.cloud.storage.Client', return_value=test_storage_client):
-
-        with patch('json.loads', new_callable=MagicMock) as mock_json:
-
-            backend = Backend(test_storage_client)
-
-            mock_json.return_value = {"time": "45"}
-
-            result = backend.get_time_ranges()
+            result = backend.get_recipe_categories()
+            print(result)
 
     assert len(result) == 1
 
 
-""" This test checks if there is one time range in our json fields 
+""" This test checks if there is one category in our json fields 
+
 We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
 We also patch in our storage client and a json load
 """
 
 
-def test_get_time_range_no_time_field():
+def test_get_recipe_category_no_category_field():
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"name": "Minecraft"}
+
+            result = backend.get_recipe_categories()
+            print(result)
+
+    assert len(result) == 0
+
+
+""" This test checks if there is no category field available 
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_get_recipe_category_no_category_entry():
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"cate": ""}
+
+            result = backend.get_recipe_categories()
+            print(result)
+
+    assert len(result) == 0
+
+
+""" This test checks if there the category field is empty
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_get_selected_categories_one_category():
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"cate": "pie"}
+            categories = ['pie']
+            result = backend.get_selected_categories(categories)
+            print(result)
+
+    assert len(result) == 1
+
+
+""" This test checks if there is one category in our json fields that matched our mocked user input
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_get_selected_categories_no_category_field():
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"name": "Minecraft"}
+            categories = ['pie']
+            result = backend.get_selected_categories(categories)
+            print(result)
+
+    assert len(result) == 0
+
+
+""" This test checks if there is no category field in our mock JSON
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_get_selected_categories_no_category_entry():
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {"cate": ""}
+            categories = ['pie']
+            result = backend.get_selected_categories(categories)
+            print(result)
+
+    assert len(result) == 0
+
+
+""" This test checks if there is no input in our category field
+
+We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
+We also patch in our storage client and a json load
+"""
+
+
+def test_delete_preferences():
 
     test_blob = MagicMock()
     test_bucket = MagicMock()
@@ -294,20 +358,28 @@ def test_get_time_range_no_time_field():
 
             backend = Backend(test_storage_client)
 
-            mock_json.return_value = {"game": "Minecraft"}
+            mock_json.return_value = {
+                'password': 'password',
+                'preferences': ['cake', 'fruit']
+            }
+            user = User('new')
 
-            result = backend.get_time_ranges()
+            deleted_preferences = ['cake']
 
-    assert len(result) == 0
+            result = backend.delete_preferences(user, deleted_preferences)
+            print(result)
+
+    assert len(result) == 1
 
 
-""" This test checks if there is no time field in our JSON 
-We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
-We also patch in our storage client and a json load
+""" Test that delete_prefences is working correctly by removing one item
+
+We mock a blob, bucket and storage_client, but also patch in our GCS and json.loads
+We set our user to have only two prefernces but later remove one
 """
 
 
-def test_get_time_ranges_no_time_entry():
+def test_delete_preferences_no_saved_preferences():
 
     test_blob = MagicMock()
     test_bucket = MagicMock()
@@ -323,16 +395,58 @@ def test_get_time_ranges_no_time_entry():
 
             backend = Backend(test_storage_client)
 
-            mock_json.return_value = {"time": ""}
+            mock_json.return_value = {'password': 'password', 'preferences': []}
+            user = User('new')
 
-            result = backend.get_time_ranges()
+            deleted_preferences = ['cake', 'pie']
+
+            result = backend.delete_preferences(user, deleted_preferences)
+            print(result)
 
     assert len(result) == 0
 
 
-""" This test checks if our time field is empty 
-We mock a blob, bucket and storage client, while setting return values for out list_blobs and mock_json function
-We also patch in our storage client and a json load
+""" Test that delete_prefences is working correctly by trying to remove items from an empty list
+
+We mock a blob, bucket and storage_client, but also patch in our GCS and json.loads
+We set our user to have no preferences, and then try to delete something (it will remain the same)
+"""
+
+
+def test_delete_preferences_empty_delete_preferences():
+
+    test_blob = MagicMock()
+    test_bucket = MagicMock()
+    test_storage_client = MagicMock()
+
+    test_storage_client.list_blobs.return_value = [test_blob]
+
+    test_storage_client.bucket.return_value = test_bucket
+
+    with patch('google.cloud.storage.Client', return_value=test_storage_client):
+
+        with patch('json.loads', new_callable=MagicMock) as mock_json:
+
+            backend = Backend(test_storage_client)
+
+            mock_json.return_value = {
+                'password': 'password',
+                'preferences': ['cake', 'pie']
+            }
+            user = User('new')
+
+            deleted_preferences = []
+
+            result = backend.delete_preferences(user, deleted_preferences)
+            print(result)
+
+    assert len(result) == 2
+
+
+""" Test that delete_prefences is working correctly by giving no values
+
+We mock a blob, bucket and storage_client, but also patch in our GCS and json.loads
+We set our user to have only two prefernces and then try and remove from an empty list
 """
 
 
