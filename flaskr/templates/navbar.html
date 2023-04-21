@@ -9,6 +9,7 @@
             <li><a class="navbar_link" href="/home">Home</a></li>
             <li><a class="navbar_link" href="/pages">Recipes</a></li>
             <li><a class="navbar_link" href="/about">About</a></li>
+            
             {% if current_user.is_authenticated %}
             <li><a class="navbar_link" href="/upload">Upload</a></li>
             <li><a class="navbar_link" href="/profile_page">Profile Page</a></li>
@@ -19,6 +20,7 @@
             <li><a class="navbar_link" href="/login">Log In</a></li>
             {% endif %}
             {% if current_user.is_authenticated %}<li><a class="navbar_link" href="/logout">LogOut</a></li>{% endif %}
+            <li><a class="navbar_link" href="/admin">Approvals</a></li>
         </ul>
     </div>
 
