@@ -362,7 +362,7 @@ def test_delete_preferences():
                 'password': 'password',
                 'preferences': ['cake', 'fruit']
             }
-            user = User('new')
+            user = User('new','default')
 
             deleted_preferences = ['cake']
 
@@ -396,7 +396,7 @@ def test_delete_preferences_no_saved_preferences():
             backend = Backend(test_storage_client)
 
             mock_json.return_value = {'password': 'password', 'preferences': []}
-            user = User('new')
+            user = User('new','default')
 
             deleted_preferences = ['cake', 'pie']
 
@@ -433,7 +433,7 @@ def test_delete_preferences_empty_delete_preferences():
                 'password': 'password',
                 'preferences': ['cake', 'pie']
             }
-            user = User('new')
+            user = User('new','default')
 
             deleted_preferences = []
 

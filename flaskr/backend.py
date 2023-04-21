@@ -3,6 +3,7 @@ from flask import Flask, flash, request, redirect, url_for, send_file
 import base64
 import io
 import json
+import random
 """Backend Class for Program, Retrieves Data from Cloud Storage for Use.
 
 Typical usage example:
@@ -281,4 +282,126 @@ class Backend:
 
     Returns:
         Newly updated user_preferences
+    """
+
+    def belongs_to_game(self, game_titles):
+        """Iterate through pages, evaluate if their game title
+            belongs to the list of titles the user chose.
+            Return all pages that match the game title.        
+
+        Args:
+          game_titles: List of game titles selected by the user.
+        """
+        result_pages = []
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client=None))
+            for game in game_titles:
+                if game.lower() == page_data["game"].lower():
+                    result_pages.append(page_data)
+        return result_pages
+
+    def is_quick_enough(self, time_range):
+        """Iterate through pages, evaluate if their time
+            belongs to the time the user chose.
+            Return all pages that match the time.        
+
+        Args:
+          time_range: Int value representing minutes.
+        """
+        result_pages = []
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client=None))
+            if int(time_range) >= int(page_data["time"]):
+                result_pages.append(page_data)
+        return result_pages
+
+    def surprise_me(self):
+        """Returns a random page my using the random
+            module to select a randomized index from 
+            the list of all recipe pages.
+        """
+        storage_client = storage.Client()
+        blobs = list(
+            storage_client.list_blobs("nrjcontent",
+                                      prefix="pages/",
+                                      delimiter="/"))
+        index = random.randint(0, len(blobs) - 1)
+        blob = blobs[index]
+        page_data = json.loads(blob.download_as_bytes(client=None))
+        return page_data
+
+    def create_copy_file(self, json_string):
+        try:
+            json_object = json.loads(json_string)
+        except ValueError:
+            return #Bad json input passed
+
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("nrjcontent")
+
+        #creation of unique temp name for new blob
+        counter = 1
+        new_blob_name = None
+        while True:
+            new_blob_name = json_object["blobname"][:-5] + "(" + str(counter) + ")" + json_object["blobname"][-5:]
+            if storage.Blob(bucket=bucket, name="pages/temp/"+new_blob_name).exists(storage_client):
+                counter += 1
+                continue
+            else:
+                break
+
+        blob = bucket.blob("pages/temp/"+new_blob_name)
+        blob.upload_from_string(json.dumps(json_object))
+        return blob.name
+
+    """ Creates a blob in temp folder from json object
+
+    Gets a json string as a parameter, and encodes it. Creates a unique filename for the new blob
+    to be stored in the temp/ folder and uploads that json data into it. To be used with forms in
+    /check_page route, see pages.py.
+
+    Args:
+        json_string: a string containing a json object to be encoded
+        Ex: '{ "test":"test", "test2":"test2" }'
+    Returns:
+        Creates new object in temp/ folder from json data, returns nothing.
+    """
+
+    def overwrite_original_file(self, old_blob_name):
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("nrjcontent")
+
+        if old_blob_name[-5:] != ".json" or old_blob_name[-6] != ")" or old_blob_name[-8] != "(":
+            return #Bad input string
+
+        new_blob_name = old_blob_name[:-8] + old_blob_name[-5:]
+            
+        destination = bucket.blob("pages/" + new_blob_name)
+        sources = [bucket.blob("pages/temp/" + old_blob_name)]
+        destination.compose(sources)
+        sources[0].delete()
+        return
+
+    """ Gets a blob from temp/ folder and overwrites blob with same name in pages/ with it.
+
+    Gets a string with a blob name as a param, gets the blob with that name in temp/ folder. 
+    Then overwrites original file in pages/ with that temp/ blob removing the version number [(2)].
+    To be used with the admin approvals and update the original pages of the wiki. To be used with forms in
+    /check_page route, see pages.py.
+
+    Args:
+        old_blob_name: string with input of the blob name
+        MUST be in format of "whatevername(2).json" -- anything before the parentheses
+        doesn't matter, but it must end with "(*number*).json"
+        Ex: 'pages_test_file(1).json'
+    Returns:
+        Updates original file and deletes temp/ file, returns nothing.
     """
