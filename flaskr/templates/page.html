@@ -10,14 +10,6 @@
         <h3 class="dishgame">{{page_data["game"]}}</h3>
         <h4 class="dishcate">{{page_data["cate"]}}</h4>
         
-        <br><form method='POST' action="/check_page" enctype='multipart/form-data'>
-            <label for="send_edit"> Enter raw json data:</label>
-            <input id="send_edit" name="send_edit" type='text'> <br>
-            <label for="approve_overwrite"> Enter GCS blob name to use to overwrite original:</label>
-            <input id="approve_overwrite" name="approve_overwrite" type='text'> <br>
-            <input type="submit" value="Submit"> <br> <br>
-        </form>
-
         <p>
             {{page_data["desc"]}}
             <br>
@@ -48,10 +40,7 @@
         
         <form method='POST' enctype='multipart/form-data'>
             <textarea id="freeform" name="freeform" rows="20" cols="100">
-            {
-               {{ page_data }}
-                    
-            }
+                {{page_data}}
             </textarea>
             <input type='submit' name='edits' value='Submit Edits'>
         </form>

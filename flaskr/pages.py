@@ -9,9 +9,10 @@ from flaskr.user import User
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
 import base64
 import io
+import json
 
 # Extension that the user is allowed to upload
-#ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'}
+# ALLOWED_EXTENSIONS = {'png','jpg','jpeg','pdf','json'}
 ALLOWED_EXTENSIONS = {'json'}
 """Route Manager for Program
 
@@ -71,22 +72,13 @@ def make_endpoints(app):
     @app.route("/pages/<int:page_id>", methods=['GET', 'POST'])
     def show_page(page_id):
         if current_user.is_authenticated:
-
             if request.method == "POST":
-
                 editing = True
-
                 if "edits" in request.form:
-                    # You get the info from the text both with this
-                    #
-                    # message = request.form.get('freeform')
-
-                    # Now we'd have to submit the value of the form
-
-                    # Get out of editing mode
+                    message = request.form.get('freeform')                
+                    Backend.create_copy_file(None, message)
                     editing = False
-                    # Message
-                    message = "Edits are being processed"
+                    message="Processing your edits."
 
                     return render_template("page.html",
                                            page_data=Backend.get_wiki_page(
@@ -95,7 +87,7 @@ def make_endpoints(app):
                                            editing=editing,
                                            message=message)
             else:
-                editing = False
+                editing=False
 
             return render_template("page.html",
                                    page_data=Backend.get_wiki_page(
@@ -103,7 +95,7 @@ def make_endpoints(app):
                                    name=current_user.username,
                                    editing=editing)
         else:
-            message = "Please log in before submitting edits"
+            message="Please log in before submitting edits"
             return render_template("page.html",
                                    page_data=Backend.get_wiki_page(
                                        None, page_id),
@@ -111,7 +103,7 @@ def make_endpoints(app):
 
     """Endpoint for specific wiki page. Contains POST Method
 
-    Parametrized endpoint for specific wiki page, loads page matching an ID with the jinja 
+    Parametrized endpoint for specific wiki page, loads page matching an ID with the jinja
     template (page.html) and variables that determine whether a user is an editing mode.
     Calls Backend function for loading the matching data and can return HTML form info
 
@@ -121,12 +113,13 @@ def make_endpoints(app):
     """
 
     @app.route("/check_page",  methods=['GET', 'POST'])
-    def check_page_form():
+    def check_page_form():            
         if request.method == 'POST':
             if request.form["send_edit"]:
                 Backend.create_copy_file(None, request.form["send_edit"])
             if request.form["approve_overwrite"]:
-                Backend.overwrite_original_file(None, request.form["approve_overwrite"])
+                Backend.overwrite_original_file(
+                    None, request.form["approve_overwrite"])
         return redirect('/pages')
     """ Checks a page for any edits being pushed or approved.
 
@@ -136,7 +129,7 @@ def make_endpoints(app):
 
     Args:
         Using POST we obtain a form request to be checked.
-    
+
     Uses:
         <form method='POST' action="/check_page" enctype='multipart/form-data'>
             <label for="send_edit"> Enter raw json data:</label>
@@ -150,14 +143,14 @@ def make_endpoints(app):
         A redirect to pages, but can be anything else.
     """
 
-    @app.route("/about", methods=['GET'])
+    @ app.route("/about", methods=['GET'])
     def about():
 
-        author_images = ['plswork.jpg', 'cat.jpg', 'hamster.png']
+        author_images=['plswork.jpg', 'cat.jpg', 'hamster.png']
 
         for index, file_name in enumerate(author_images):
-            image = Backend.get_image(None, file_name)
-            author_images[index] = image.decode('utf-8')
+            image=Backend.get_image(None, file_name)
+            author_images[index]=image.decode('utf-8')
 
         return render_template("about.html", show=author_images)
 
@@ -174,7 +167,7 @@ def make_endpoints(app):
     # Checks that the file being uploaded is allowed
     def allowed_file(filename):
         return '.' in filename and \
-            filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
     """ Checks that a given file has an allowed format
 
@@ -187,8 +180,8 @@ def make_endpoints(app):
         Returns true or false depending on if its valid or not
     """
     # Here the users upload their files
-    @app.route("/upload", methods=['GET', 'POST'])
-    @login_required
+    @ app.route("/upload", methods=['GET', 'POST'])
+    @ login_required
     def upload():
 
         if request.method == 'POST':
@@ -196,17 +189,17 @@ def make_endpoints(app):
             # Check that it's a valid file
             if 'file' not in request.files:
                 # flash('No file part')
-                message = "No file part"
+                message="No file part"
                 return render_template("upload.html",
                                        message=message,
                                        name=current_user.username)
                 # return redirect(request.url)
 
-            file = request.files['file']
+            file=request.files['file']
 
             if file.filename == '':
 
-                message = "No selected file"
+                message="No selected file"
                 return render_template("upload.html",
                                        message=message,
                                        name=current_user.username)
@@ -215,7 +208,7 @@ def make_endpoints(app):
                 # return redirect(request.url)
 
             if not (allowed_file(file.filename)):
-                message = "Not a valid file format"
+                message="Not a valid file format"
                 return render_template("upload.html",
                                        message=message,
                                        name=current_user.username)
@@ -223,11 +216,11 @@ def make_endpoints(app):
             # If valid, we pass it to the backend in order to upload to our bucket
             if file and allowed_file(file.filename):
 
-                filename = secure_filename(file.filename)
+                filename=secure_filename(file.filename)
                 file.save(os.path.join(filename))
 
                 Backend.upload(None, 'nrjcontent', file.filename)
-                message = "Succesfully uploaded"
+                message="Succesfully uploaded"
 
                 return render_template("upload.html",
                                        message=message,
@@ -238,12 +231,12 @@ def make_endpoints(app):
     """ Uploads file to specified path in bucket
 
     Using a POST method, we obtain from the user a file that will be uploaded in the bucket. Before uploading,
-    we check that its a valid file and that they selected one. If it passes the test, we can upload it. The user is required to 
+    we check that its a valid file and that they selected one. If it passes the test, we can upload it. The user is required to
     be logged in in order to access this
 
     Args:
         Using POST we obtain a file
-    
+
     Uses:
         allowed_file in order to check that the file is valid
 
@@ -251,77 +244,77 @@ def make_endpoints(app):
         A render template of the HTML along with a custom message displaying whether or not the file was uploaded succesfully
     """
 
-    @app.route("/signup")
+    @ app.route("/signup")
     def signup():
         """
         Renders sign up form template.
         """
         return render_template("signup.html")
 
-    @app.route("/check_signup", methods=['POST'])
+    @ app.route("/check_signup", methods=['POST'])
     def check_signup():
         """Acquire form data, encrypt password,
         create User object, and call backend to
         authenticate said User. If backend successfully
-        authenticates user, redirect back to home. 
-        Otherwise return error message.   
+        authenticates user, redirect back to home.
+        Otherwise return error message.
 
         Args:
           user_name: String that holds username.
           password: String that holds password with prefix to be hashed.
         """
-        backend = Backend(storage.Client())
-        user_name = request.form["Username"]
-        password = "prefix" + request.form["Password"]
-        hash = hashlib.blake2b(password.encode()).hexdigest()
-        
+        backend=Backend(storage.Client())
+        user_name=request.form["Username"]
+        password="prefix" + request.form["Password"]
+        hash=hashlib.blake2b(password.encode()).hexdigest()
+
         if user_name in open('./flaskr/admins.txt').read():
-            flask_user = User(user_name, "admin")
+            flask_user=User(user_name, "admin")
         else:
-            flask_user = User(user_name, "default")
-            
+            flask_user=User(user_name, "default")
+
         if backend.sign_up(flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
         else:
             return "Sign Up Failed."
 
-    @app.route("/login")
+    @ app.route("/login")
     def login():
         """
         Renders login form template.
         """
         return render_template("login.html")
 
-    @app.route("/check_login", methods=['POST'])
+    @ app.route("/check_login", methods=['POST'])
     def check_login():
         """Acquire form data, encrypt password,
         create User object, and call backend to
         authenticate said User. If backend successfully
-        authenticates user, redirect back to home. 
-        Otherwise return error message.   
+        authenticates user, redirect back to home.
+        Otherwise return error message.
 
         Args:
           user_name: String that holds username.
           password: String that holds password with prefix to be hashed.
         """
-        user_name = request.form["Username"]
-        password = "prefix" + request.form["Password"]
-        hash = hashlib.blake2b(password.encode()).hexdigest()
+        user_name=request.form["Username"]
+        password="prefix" + request.form["Password"]
+        hash=hashlib.blake2b(password.encode()).hexdigest()
 
         if user_name in open('./flaskr/admins.txt').read():
-            flask_user = User(user_name, "admin")
+            flask_user=User(user_name, "admin")
         else:
-            flask_user = User(user_name, "default")
-            
+            flask_user=User(user_name, "default")
+
         if Backend.sign_in(None, flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
         else:
             return "Login Failed"
 
-    @app.route("/logout")
-    @login_required
+    @ app.route("/logout")
+    @ login_required
     def logout():
         """
         Renders login form template.
@@ -330,9 +323,9 @@ def make_endpoints(app):
         return redirect('/home')
 
 
-    @app.route("/admin")
+    @ app.route("/admin")
     def admin():
-        backend = Backend(storage.Client())
+        backend=Backend(storage.Client())
 
         return render_template("admin.html")
 
@@ -340,4 +333,3 @@ def make_endpoints(app):
     A dummy route for the admin page. Uses ifs in the jinja templates to verify admin status.
     Add your code for the admin page to this method.
     """
-        

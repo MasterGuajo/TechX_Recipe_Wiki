@@ -2,6 +2,7 @@ from google.cloud import storage
 from flask import Flask, flash, request, redirect, url_for, send_file
 import base64
 import io
+import sys
 import json
 """Backend Class for Program, Retrieves Data from Cloud Storage for Use.
 
@@ -29,7 +30,7 @@ class Backend:
                                           prefix="pages/",
                                           delimiter="/")
         for blob in blobs:
-            page_data = json.loads(blob.download_as_bytes(client=None))
+            page_data = json.loads(blob.download_as_string(client=None))
             if id == int(page_data["id"]):
                 return page_data
 
@@ -158,8 +159,12 @@ class Backend:
 
     def create_copy_file(self, json_string):
         try:
+            print("Loading json", file=sys.stderr)
+            print(json_string)
             json_object = json.loads(json_string)
+            print(json_object)
         except ValueError:
+            print('Bad json', file=sys.stderr)
             return #Bad json input passed
 
         storage_client = storage.Client()
@@ -169,7 +174,7 @@ class Backend:
         counter = 1
         new_blob_name = None
         while True:
-            new_blob_name = json_object["blobname"][:-5] + "(" + str(counter) + ")" + json_object["blobname"][-5:]
+            new_blob_name = json_object["blobname"][:-5] + "(" + str(counter) + ")" + json_object.get["blobname"][-5:]
             if storage.Blob(bucket=bucket, name="pages/temp/"+new_blob_name).exists(storage_client):
                 counter += 1
                 continue

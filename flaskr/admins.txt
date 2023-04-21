@@ -1,7 +1,7 @@
 Nicole
 Rodrigo
 Jorge
-
+Bailey
 
 *Add usernames here to designate admin status*
 
