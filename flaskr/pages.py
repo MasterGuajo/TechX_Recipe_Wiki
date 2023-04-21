@@ -31,7 +31,6 @@ def make_endpoints(app):
         else:
             return User(user_id, "default")
 
-
     @app.route("/")
     @app.route("/index")
     @app.route("/home")
@@ -140,6 +139,44 @@ def make_endpoints(app):
     Returns:
         A jinja render_template call with the corresponding template - about.html. Grabs
         data from list populated by Backend.get_image() call.
+    """
+
+    @app.route("/search", methods=['POST', 'GET'])
+    @app.route("/search")
+    def search():
+        backend = Backend(storage.Client())
+        game_categories = backend.get_game_categories()
+        time_ranges = backend.get_time_ranges()
+
+        if request.method == "POST":
+
+            # Shows you current values
+            selected_games = request.form.getlist('game_chosen')
+            selected_times = request.form.get('time_chosen')
+
+            # Nicole functions
+            recipes = backend.belongs_to_game(selected_games)
+            # selected_times = backend.is_quick_enough(selected_times)
+
+            # Return recipes variable
+            return render_template("search.html",
+                                   game_categories=game_categories,
+                                   time_ranges=time_ranges,
+                                   recipes=recipes)
+
+        return render_template("search.html",
+                               game_categories=game_categories,
+                               time_ranges=time_ranges)
+
+    """ Searches and filters recipes depending on user specifications
+    Using JSON parsing, we ask the user for the game titles and time ranges they're interested in. After
+    they've done this, we send the forms to the backend so that it can be filtered.
+
+    Args:
+        POST methods with different HTML forms
+
+    Returns:
+        List of filtered recipes
     """
 
     # Checks that the file being uploaded is allowed
@@ -251,7 +288,6 @@ def make_endpoints(app):
         else:
             flask_user = User(user_name, "default")
 
-
         if backend.sign_up(flask_user, str(hash)):
             login_user(flask_user)
             return redirect('/home')
@@ -341,15 +377,16 @@ def make_endpoints(app):
                                    og_pages=lst1,
                                    len=len(lst1))
 
-
-    @app.route("/check_page",  methods=['GET', 'POST'])
+    @app.route("/check_page", methods=['GET', 'POST'])
     def check_page_form():
         if request.method == 'POST':
             if request.form["send_edit"]:
                 Backend.create_copy_file(None, request.form["send_edit"])
             if request.form["approve_overwrite"]:
-                Backend.overwrite_original_file(None, request.form["approve_overwrite"])
+                Backend.overwrite_original_file(
+                    None, request.form["approve_overwrite"])
         return redirect('/pages')
+
     """ Checks a page for any edits being pushed or approved.
 
     If a POST method is used with this route, the route will check the forms being submitted for the 'send_edit' and 'approve_overwrite'

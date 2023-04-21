@@ -3,6 +3,7 @@ import json
 from flask_login import UserMixin
 from flaskr.backend import Backend
 
+
 class User(UserMixin):
     """User class inherits from UserMixin for calling common function to handle page states.
 
@@ -33,7 +34,7 @@ class User(UserMixin):
         return True if self.privileges == "admin" else False
 
     class Role():
-        name = "default"        
+        name = "default"
 
     class UserRole():
         id = 0

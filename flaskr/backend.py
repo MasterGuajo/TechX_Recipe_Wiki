@@ -123,7 +123,7 @@ class Backend:
           password: String that holds hashed password with prefix.
         """
         storage_client = storage.Client()
-        bucket = storage_client.bucket("userpass")
+        bucket = self.storage_client.bucket("userpass")
         blob = bucket.blob(existing_user.username)
         if blob.exists():
             user_data = json.loads(blob.download_as_bytes(client=None))
@@ -342,7 +342,7 @@ class Backend:
         try:
             json_object = json.loads(json_string)
         except ValueError:
-            return #Bad json input passed
+            return  #Bad json input passed
 
         storage_client = storage.Client()
         bucket = storage_client.bucket("nrjcontent")
@@ -351,14 +351,16 @@ class Backend:
         counter = 1
         new_blob_name = None
         while True:
-            new_blob_name = json_object["blobname"][:-5] + "(" + str(counter) + ")" + json_object["blobname"][-5:]
-            if storage.Blob(bucket=bucket, name="pages/temp/"+new_blob_name).exists(storage_client):
+            new_blob_name = json_object["blobname"][:-5] + "(" + str(
+                counter) + ")" + json_object["blobname"][-5:]
+            if storage.Blob(bucket=bucket, name="pages/temp/" +
+                            new_blob_name).exists(storage_client):
                 counter += 1
                 continue
             else:
                 break
 
-        blob = bucket.blob("pages/temp/"+new_blob_name)
+        blob = bucket.blob("pages/temp/" + new_blob_name)
         blob.upload_from_string(json.dumps(json_object))
         return blob.name
 
@@ -379,11 +381,12 @@ class Backend:
         storage_client = storage.Client()
         bucket = storage_client.bucket("nrjcontent")
 
-        if old_blob_name[-5:] != ".json" or old_blob_name[-6] != ")" or old_blob_name[-8] != "(":
-            return #Bad input string
+        if old_blob_name[-5:] != ".json" or old_blob_name[
+                -6] != ")" or old_blob_name[-8] != "(":
+            return  #Bad input string
 
         new_blob_name = old_blob_name[:-8] + old_blob_name[-5:]
-            
+
         destination = bucket.blob("pages/" + new_blob_name)
         sources = [bucket.blob("pages/temp/" + old_blob_name)]
         destination.compose(sources)
@@ -404,4 +407,68 @@ class Backend:
         Ex: 'pages_test_file(1).json'
     Returns:
         Updates original file and deletes temp/ file, returns nothing.
+    """
+
+    def get_game_categories(self):
+
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+
+        game_categories = set()
+
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client=None))
+
+            if 'game' not in page_data:
+                continue
+
+            elif page_data['game'] not in game_categories:
+                if page_data['game'] != "":
+                    game_categories.add(page_data['game'])
+
+        return game_categories
+
+    """ Obtains all game titles in current recipes
+    Parses through all recipe JSONs in our bucket and creates a set of 
+    all game titles available
+
+    Args:
+        None
+
+    Returns:
+        A set of game titles
+    """
+
+    def get_time_ranges(self):
+
+        storage_client = storage.Client()
+        blobs = storage_client.list_blobs("nrjcontent",
+                                          prefix="pages/",
+                                          delimiter="/")
+
+        time_ranges = set()
+
+        for blob in blobs:
+            page_data = json.loads(blob.download_as_bytes(client=None))
+
+            if 'time' not in page_data:
+                continue
+
+            elif page_data['time'] not in time_ranges:
+                if page_data['time'] != "":
+                    time_ranges.add(page_data['time'])
+
+        return time_ranges
+
+    """ Obrains all time ranges in current recipes
+    Parses through all recipe JSONs in bucket and creates a set of all 
+    time ranges available
+
+    Args:
+        None
+
+    Returns:
+        A set of time ranges    
     """
