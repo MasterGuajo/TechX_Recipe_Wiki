@@ -216,27 +216,52 @@ class Backend:
     if they will be returned
 
     Args:
-        selected_categories: An array of user preferences
+        selected_categories: An array of user preferences        
     Returns:
-        resulting_pages: An array of recipes that fall with user preferences
+        resulting_pages: An array of the user's prefered categories.
     """
 
     def get_preferences(self, user):
+        """ Gets user preferences from user json file.
+        If user does not have a preferences key, return an
+        empty list.
+
+        Args:
+            user: User to extract json file from.
+        Returns:
+            preferences: An array of recipes that fall with user preferences
+        """
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(user.username)
         if blob.exists():
             user_data = json.loads(blob.download_as_bytes(client=None))
-            return user_data["preferences"]
+            if 'preferences' not in user_data:
+                return []
+            else:
+                return user_data["preferences"]
         else:
             return []
 
     def store_preferences(self, user, new_preferences):
+        """ Stores user preferences into user json file.
+        If user does not have a preferences key, call 
+        reset preferences to create preferences key with
+        an empty array.
+
+        Args:
+            user: User to write json file into.
+        Returns:
+            boolean: True if storing was successful, false otherwise.
+        """
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(user.username)
         if blob.exists():
             user_data = json.loads(blob.download_as_bytes(client=None))
+            if 'preferences' not in user_data:
+                self.reset_preferences(user)
+                user_data = json.loads(blob.download_as_bytes(client=None))
             for pref in new_preferences:
                 if pref not in user_data["preferences"]:
                     user_data["preferences"].append(pref)
@@ -247,6 +272,11 @@ class Backend:
             return False
 
     def reset_preferences(self, user):
+        """ Overwrites user preferences from user json file.
+
+        Args:
+            user: User to write json file into.
+        """
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(user.username)
@@ -258,6 +288,13 @@ class Backend:
             return
 
     def delete_preferences(self, user, deleted_preferences):
+        """ Deletes selected preferences from user json file.
+
+        Args:
+            user: User to extract json file from.
+        Returns:
+            result: An array of the remaining categories.
+        """
         storage_client = storage.Client()
         bucket = storage_client.bucket("userpass")
         blob = bucket.blob(user.username)
