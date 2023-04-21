@@ -749,7 +749,7 @@ def test_surprise_me():
         with patch('google.cloud.storage.Client', return_value=storage_client):
             with patch('json.loads', new_callable=MagicMock) as mock_json:
                 backend = Backend(storage_client)
-                i = random.randint(-1, 2)
+                i = random.randint(0, 2)
                 mock_json.return_value = {"id": str(i)}
                 test = backend.surprise_me()
                 temp = int(test["id"])
