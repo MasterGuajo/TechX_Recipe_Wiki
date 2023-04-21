@@ -154,9 +154,14 @@ def make_endpoints(app):
             selected_games = request.form.getlist('game_chosen')
             selected_times = request.form.get('time_chosen')
 
-            # Nicole functions
-            recipes = backend.belongs_to_game(selected_games)
-            # selected_times = backend.is_quick_enough(selected_times)
+            if len(selected_games) == 0 and selected_times == None:
+                recipes = []
+
+            elif len(selected_games) != 0:
+                recipes = backend.belongs_to_game(selected_games)
+
+            else:
+                recipes = backend.is_quick_enough(selected_times)
 
             # Return recipes variable
             return render_template("search.html",
